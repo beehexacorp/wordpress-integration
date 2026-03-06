@@ -4,17 +4,13 @@ A SaaS Integration Platform that helps businesses automate their operations by c
 
 ### Key Capabilities
 
-⭐ **Middleware**  
-HexaSync stays in the middle to transfer data between different systems.
+⭐ **Middleware**: HexaSync stays in the middle to transfer data between different systems.
 
-⭐ **Cell-Based Mapping**  
-Helps reflect any kind of data points from system to system.
+⭐ **Cell-Based Mapping**: Helps reflect any kind of data points from system to system.
 
-⭐ **Customizable Tasks**  
-HexaSync is designed to adapt to any customization required to fulfill business needs.
+⭐ **Customizable Tasks**: HexaSync is designed to adapt to any customization required to fulfill business needs.
 
-⭐ **Monitoring**  
-HexaSync can detect exactly when a synchronization transaction is **SUCCESSFUL or FAILED**, and explain **WHY**.
+⭐ **Monitoring**: HexaSync can detect exactly when a synchronization transaction is **SUCCESSFUL or FAILED**, and explain **WHY**.
 
 ---
 
