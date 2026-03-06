@@ -346,7 +346,7 @@ class HexaSyncLogAPI {
 
         $log = $this->repository->getById($id);
 
-        return new \WP_REST_Response([$log->toArray()], 201);
+        return new \WP_REST_Response($log->toArray(), 201);
     }
 
     /**
@@ -427,10 +427,7 @@ class HexaSyncLogAPI {
 
         $updated_log = $this->repository->getById($id);
 
-        return new \WP_REST_Response([
-            'data' => $updated_log->toArray(),
-            'message' => 'Log updated successfully',
-        ], 200);
+        return new \WP_REST_Response($updated_log->toArray(), 200);
     }
 
     /**

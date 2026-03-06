@@ -23,7 +23,7 @@ class AdminSyncLogPage
         $current_page = isset($_GET['paged']) ? absint($_GET['paged']) : 1;
 
         // Set up pagination
-        $per_page = 50;
+        $per_page = 20;
         $offset = ($current_page - 1) * $per_page;
 
         // Get logs based on filters
