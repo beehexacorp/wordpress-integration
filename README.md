@@ -22,7 +22,7 @@ A SaaS Integration Platform that helps businesses automate their operations by c
 
 ### Automate and Accelerate with HexaSync – Your Bridge to Flawless Integration and Growth
 
-HexaSync is a **SaaS Integration Platform** that connects:
+[HexaSync](https://www.beehexa.com/) is a **SaaS Integration Platform** that connects:
 
 - eCommerce
 - POS
@@ -56,3 +56,15 @@ Common software that can integrate with HexaSync includes:
 - Automate **accounting processes**  
 - Improve **customer satisfaction**  
 - Ensure **more accurate inventory control**
+
+## Installation
+
+Upload the [Beehexa](https://www.beehexa.com/) plugin to your blog into **wp-content/plugins**, activate it, and then contact to [Beehexa](https://www.beehexa.com/) developer for sending log to your system..
+
+1, 2, 3: You're done!
+
+## Changelog
+### 1.0.0
+- Initial release of HexaSync plugin for WordPress.
+- Provide an easy way to integrate HexaSync with WordPress sites for enhanced data synchronization and automation capabilities.
+- Includes basic logging functionality to help users monitor synchronization activities and troubleshoot issues effectively.
