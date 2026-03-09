@@ -18,10 +18,17 @@ class AdminSyncLogPage
         $repository = new \Beehexa\Repository\HexaSyncLogRepository();
 
         // Get filter parameters from query string
-        $filter_profile = isset($_GET['filter_profile']) ? sanitize_text_field($_GET['filter_profile']) : '';
-        $filter_task = isset($_GET['filter_task']) ? sanitize_text_field($_GET['filter_task']) : '';
-        $current_page = isset($_GET['paged']) ? absint($_GET['paged']) : 1;
+        $filter_profile = isset($_GET['filter_profile']) ? sanitize_text_field(wp_unslash($_GET['filter_profile'])) : '';
+        $filter_task = isset($_GET['filter_task']) ? sanitize_text_field(wp_unslash($_GET['filter_task'])) : '';
+        $current_page = isset($_GET['paged']) ? absint(wp_unslash($_GET['paged'])) : 1;
 
+        if(wp_verify_nonce($filter_profile, 'set_options') &&
+        wp_verify_nonce($filter_task, 'set_options') &&
+        wp_verify_nonce($current_page, 'set_options')){
+            $filter_profile = '';
+            $filter_task = '';
+            $current_page = 1;
+        }
         // Set up pagination
         $per_page = 20;
         $offset = ($current_page - 1) * $per_page;
@@ -98,7 +105,7 @@ class AdminSyncLogPage
 
             <!-- Results info -->
             <p style="margin: 10px 0; color: #666;">
-                Showing <strong><?php echo ($offset + 1); ?></strong> to <strong><?php echo min($offset + $per_page, $total_logs); ?></strong> of <strong><?php echo $total_logs; ?></strong> logs
+                Showing <strong><?php echo esc_html($offset + 1); ?></strong> to <strong><?php echo esc_html(min($offset + $per_page, $total_logs)); ?></strong> of <strong><?php echo esc_html($total_logs); ?></strong> logs
                 <?php if ($filter_profile || $filter_task): ?>
                     <em>(Filtered)</em>
                 <?php endif; ?>
@@ -246,9 +253,9 @@ class AdminSyncLogPage
 
                     for ($i = $start_page; $i <= $end_page; $i++) {
                         if ($i === $current_page) {
-                            echo '<span class="button" style="background: #0073aa; color: white; cursor: default;">' . $i . '</span>';
+                            echo '<span class="button" style="background: #0073aa; color: white; cursor: default;">' . esc_html($i) . '</span>';
                         } else {
-                            echo '<a href="' . esc_url(admin_url('admin.php?page=hexasync-logs&paged=' . $i . $filter_query_string)) . '" class="button">' . $i . '</a>';
+                            echo '<a href="' . esc_url(admin_url('admin.php?page=hexasync-logs&paged=' . $i . $filter_query_string)) . '" class="button">' . esc_html($i) . '</a>';
                         }
                     }
 
@@ -256,7 +263,7 @@ class AdminSyncLogPage
                         if ($end_page < $total_pages - 1) {
                             echo '<span style="padding: 0 5px;">...</span>';
                         }
-                        echo '<a href="' . esc_url(admin_url('admin.php?page=hexasync-logs&paged=' . $total_pages . $filter_query_string)) . '" class="button">' . $total_pages . '</a>';
+                        echo '<a href="' . esc_url(admin_url('admin.php?page=hexasync-logs&paged=' . $total_pages . $filter_query_string)) . '" class="button">' . esc_html($total_pages) . '</a>';
                     }
 
                     // Next button

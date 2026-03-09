@@ -1,20 +1,24 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * @package Beehexa
  */
 /*
-Plugin Name: HexaSync Automation Engine by Beehexa
+Plugin Name: HexaSync SaaS Integration Platform by Beehexa
 Plugin URI: https://www.beehexa.com/
 Description: Through years of experience working with global retailers, manufacturers, and distributors, Beehexa has developed the HexaSync Automation Engine — a unified platform that connects and automates processes across eCommerce, Accounting, ERP, POS, CRM, GenAI, and other enterprise systems.
-Version: 1.1.0
-Requires at least: 5.8
+Version: 1.1.1
+Requires at least: 6.2
 Requires PHP: 7.4
-Author: HexaSync - Beehexa Team
+Author: Beehexa Team
 Author URI: https://www.beehexa.com/about/
 License: GPLv2 or later
-Text Domain: hexasync
+Text Domain: hexasyncintegration
 */
 
+define( 'BEEHEXA_VERSION', '1.1.0' );
+define( 'BEEHEXA__MINIMUM_WP_VERSION', '6.2' );
+define( 'BEEHEXA__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 // Autoload classes
 use Beehexa\UI\AdminSyncLogPage;
 

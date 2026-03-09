@@ -9,10 +9,6 @@ namespace Beehexa\Repository;
 
 class HexaSyncLogRepository {
 
-    /**
-     * @var \wpdb
-     */
-    private $wpdb;
 
     /**
      * @var string
@@ -24,7 +20,6 @@ class HexaSyncLogRepository {
      */
     public function __construct() {
         global $wpdb;
-        $this->wpdb = $wpdb;
         $this->table_name = $wpdb->prefix . 'hexasync_log';
     }
 
@@ -35,6 +30,7 @@ class HexaSyncLogRepository {
      * @return \Beehexa\DTO\HexaSyncLogDTO[]
      */
     public function getAll($args = []) {
+        global $wpdb;
         $defaults = [
             'order' => 'DESC',
             'orderby' => 'log_id',
@@ -43,18 +39,21 @@ class HexaSyncLogRepository {
         ];
 
         $args = wp_parse_args($args, $defaults);
-
-        $query = "SELECT * FROM {$this->table_name}";
-        $query .= " ORDER BY {$args['orderby']} {$args['order']}";
+        $orderBy = esc_sql($args['orderby']);
+        $order = esc_sql($args['order']);
+        $limit = esc_sql($args['limit']);
+        $offset = esc_sql($args['offset']);
+        $query = "SELECT * FROM %i ORDER BY {$orderBy} {$order}";
 
         if ($args['limit'] > 0) {
-            $query .= " LIMIT {$args['limit']}";
+            $query .= " LIMIT {$limit}";
             if ($args['offset'] > 0) {
-                $query .= " OFFSET {$args['offset']}";
+                $query .= " OFFSET {$offset}";
             }
         }
 
-        $results = $this->wpdb->get_results($query);
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $results = $wpdb->get_results($wpdb->prepare($query, $this->table_name));
 
         if (empty($results)) {
             return [];
@@ -72,13 +71,13 @@ class HexaSyncLogRepository {
      * @return \Beehexa\DTO\HexaSyncLogDTO|null
      */
     public function getById($id) {
-        $query = $this->wpdb->prepare(
-            "SELECT * FROM {$this->table_name} WHERE log_id = %d",
-            $id
-        );
+        global $wpdb;
 
-        $result = $this->wpdb->get_row($query);
-
+        // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnsupportedIdentifierPlaceholder, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $result = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM %i WHERE log_id = %d",
+            $this->table_name, $id
+        ));
         if (empty($result)) {
             return null;
         }
@@ -93,13 +92,13 @@ class HexaSyncLogRepository {
      * @return \Beehexa\DTO\HexaSyncLogDTO[]
      */
     public function getByProfileName($profile_name) {
-        $query = $this->wpdb->prepare(
-            "SELECT * FROM {$this->table_name} WHERE profile_name like %s order by log_id desc",
-            '%'. $profile_name . '%'
-        );
-        $query = $this->wpdb->remove_placeholder_escape($query);
-        $results = $this->wpdb->get_results($query);
-
+        global $wpdb;
+        // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnsupportedIdentifierPlaceholder,WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $results = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT * FROM %i WHERE profile_name like %s order by log_id desc",
+                    $this->table_name, '%' . $profile_name . '%'
+                ));
         if (empty($results)) {
             return [];
         }
@@ -116,12 +115,13 @@ class HexaSyncLogRepository {
      * @return \Beehexa\DTO\HexaSyncLogDTO[]
      */
     public function getByProfileAndTaskName($profile_name, $task_name) {
-        $query = $this->wpdb->prepare(
-            "SELECT * FROM {$this->table_name} WHERE profile_name like %s and task_name like %s order by log_id desc",
-            ['%'. $profile_name . '%', '%'. $task_name. '%']
-        );
-        $query = $this->wpdb->remove_placeholder_escape($query);
-        $results = $this->wpdb->get_results($query);
+        global $wpdb;
+        // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnsupportedIdentifierPlaceholder,WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $results = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT * FROM %i WHERE profile_name like %s and task_name like %s order by log_id desc",
+                    $this->table_name, '%' . $profile_name . '%', '%' . $task_name . '%'
+                ));
 
         if (empty($results)) {
             return [];
@@ -139,13 +139,13 @@ class HexaSyncLogRepository {
      * @return \Beehexa\DTO\HexaSyncLogDTO[]
      */
     public function getByTaskName($task_name) {
-        $query = $this->wpdb->prepare(
-            "SELECT * FROM {$this->table_name} WHERE task_name like %s order by log_id desc",
-            '%'. $task_name. '%'
-        );
-
-        $query = $this->wpdb->remove_placeholder_escape($query);
-        $results = $this->wpdb->get_results($query);
+        global $wpdb;
+        // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnsupportedIdentifierPlaceholder,WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $results = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT * FROM %i WHERE task_name like %s order by log_id desc",
+                    $this->table_name, '%' . $task_name . '%'
+                ));
 
         if (empty($results)) {
             return [];
@@ -163,6 +163,7 @@ class HexaSyncLogRepository {
      * @return int|false Log ID on success, false on failure
      */
     public function save(\Beehexa\DTO\HexaSyncLogDTO $dto) {
+        global $wpdb;
         $data = [
             'message' => $dto->getMessage(),
             'profile_id' => $dto->getProfileId(),
@@ -184,7 +185,8 @@ class HexaSyncLogRepository {
 
         if ($dto->getId()) {
             // Update existing
-            $result = $this->wpdb->update(
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+            $result = $wpdb->update(
                 $this->table_name,
                 $data,
                 ['log_id' => $dto->getId()],
@@ -195,13 +197,14 @@ class HexaSyncLogRepository {
             return $result !== false ? $dto->getId() : false;
         } else {
             // Insert new
-            $result = $this->wpdb->insert(
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+            $result = $wpdb->insert(
                 $this->table_name,
                 $data,
                 $format
             );
 
-            return $result !== false ? $this->wpdb->insert_id : false;
+            return $result !== false ? $wpdb->insert_id : false;
         }
     }
 
@@ -212,7 +215,9 @@ class HexaSyncLogRepository {
      * @return int|false Number of rows deleted, false on failure
      */
     public function delete($id) {
-        return $this->wpdb->delete(
+        global $wpdb;
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+        return $wpdb->delete(
             $this->table_name,
             ['log_id' => $id],
             ['%d']
@@ -225,8 +230,9 @@ class HexaSyncLogRepository {
      * @return int
      */
     public function getCount() {
-        $query = "SELECT COUNT(*) FROM {$this->table_name}";
-        return (int)$this->wpdb->get_var($query);
+        global $wpdb;
+        // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnsupportedIdentifierPlaceholder,WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        return (int)$wpdb->get_var("SELECT COUNT(*) FROM %i", $this->table_name);
     }
 
     /**

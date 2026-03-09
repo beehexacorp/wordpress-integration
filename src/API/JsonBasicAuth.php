@@ -1,11 +1,10 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
+ * HexaSyncLogAPI - REST API for managing HexaSync Logs
  *
- * Created By Hidro Le
- * Date: 3/5/26
- *
+ * @package Beehexa\API
  */
-
 namespace Beehexa\API;
 
 class JsonBasicAuth
@@ -13,12 +12,12 @@ class JsonBasicAuth
 
     static function json_basic_auth_handler($user)
     {
-        global $current_user, $wp_json_basic_auth_error;
+        global $current_user, $beehexa_json_basic_auth_error;
         if(!empty($current_user)) {
             return $current_user->ID;
         }
 
-        $wp_json_basic_auth_error = null;
+        $beehexa_json_basic_auth_error = null;
 
         // Don't authenticate twice
         if (!empty($user)) {
@@ -29,27 +28,31 @@ class JsonBasicAuth
         if (!isset($_SERVER['PHP_AUTH_USER'])) {
             return $user;
         }
+        // Check that we're trying to authenticate
+        if (!isset($_SERVER['PHP_AUTH_PW'])) {
+            return $user;
+        }
 
-        $username = $_SERVER['PHP_AUTH_USER'];
-        $password = $_SERVER['PHP_AUTH_PW'];
+        $username = sanitize_text_field(wp_unslash($_SERVER['PHP_AUTH_USER']));
+        $password = sanitize_text_field(wp_unslash($_SERVER['PHP_AUTH_PW']));
         /**
          * In multi-site, wp_authenticate_spam_check filter is run on authentication. This filter calls
          * get_currentuserinfo which in turn calls the determine_current_user filter. This leads to infinite
          * recursion and a stack overflow unless the current function is removed from the determine_current_user
          * filter during authentication.
          */
-        remove_filter('determine_current_user', 'json_basic_auth_handler', 20);
+        remove_filter('determine_current_user', [static::class, 'json_basic_auth_handler'], 20);
 
         $user = wp_authenticate($username, $password);
 
-        add_filter('determine_current_user', 'json_basic_auth_handler', 20);
+        add_filter('determine_current_user', [static::class,'json_basic_auth_handler'], 20);
 
         if (is_wp_error($user)) {
-            $wp_json_basic_auth_error = $user;
+            $beehexa_json_basic_auth_error = $user;
             return null;
         }
 
-        $wp_json_basic_auth_error = true;
+        $beehexa_json_basic_auth_error = true;
 
         return $user->ID;
     }
@@ -61,8 +64,8 @@ class JsonBasicAuth
             return $error;
         }
 
-        global $wp_json_basic_auth_error;
+        global $beehexa_json_basic_auth_error;
 
-        return $wp_json_basic_auth_error;
+        return $beehexa_json_basic_auth_error;
     }
 }
