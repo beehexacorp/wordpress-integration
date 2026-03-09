@@ -27,7 +27,9 @@ class AdminSyncLogPage
         $offset = ($current_page - 1) * $per_page;
 
         // Get logs based on filters
-        if ($filter_profile) {
+        if($filter_profile && $filter_task){
+            $logs = $repository->getByProfileAndTaskName($filter_profile, $filter_task);
+        } elseif ($filter_profile) {
             $logs = $repository->getByProfileName($filter_profile);
         } elseif ($filter_task) {
             $logs = $repository->getByTaskName($filter_task);

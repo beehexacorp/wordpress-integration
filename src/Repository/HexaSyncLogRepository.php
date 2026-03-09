@@ -44,7 +44,7 @@ class HexaSyncLogRepository {
 
         $args = wp_parse_args($args, $defaults);
 
-        $query = "SELECT log_id, message, profile_id, profile_name, action_type, log_detail_id, reference_info, error, task_id, task_name, task_status, executed_at, execute_at, retry_count, push_note, created_at, updated_at FROM {$this->table_name}";
+        $query = "SELECT * FROM {$this->table_name}";
         $query .= " ORDER BY {$args['orderby']} {$args['order']}";
 
         if ($args['limit'] > 0) {
@@ -73,7 +73,7 @@ class HexaSyncLogRepository {
      */
     public function getById($id) {
         $query = $this->wpdb->prepare(
-            "SELECT log_id, message, profile_id, profile_name, action_type, log_detail_id, reference_info, error, task_id, task_name, task_status, executed_at, execute_at, retry_count, push_note, created_at, updated_at FROM {$this->table_name} WHERE log_id = %d",
+            "SELECT * FROM {$this->table_name} WHERE log_id = %d",
             $id
         );
 
@@ -94,10 +94,33 @@ class HexaSyncLogRepository {
      */
     public function getByProfileName($profile_name) {
         $query = $this->wpdb->prepare(
-            "SELECT log_id, message, profile_id, profile_name, action_type, log_detail_id, reference_info, error, task_id, task_name, task_status, executed_at, execute_at, retry_count, push_note, created_at, updated_at FROM {$this->table_name} WHERE profile_name = %s",
-            $profile_name
+            "SELECT * FROM {$this->table_name} WHERE profile_name like %s order by log_id desc",
+            '%'. $profile_name . '%'
         );
+        $query = $this->wpdb->remove_placeholder_escape($query);
+        $results = $this->wpdb->get_results($query);
 
+        if (empty($results)) {
+            return [];
+        }
+
+        return array_map(function($row) {
+            return $this->hydrateDTO((array)$row);
+        }, $results);
+    }
+
+    /**
+     * Get logs by profile name
+     *
+     * @param string $profile_name
+     * @return \Beehexa\DTO\HexaSyncLogDTO[]
+     */
+    public function getByProfileAndTaskName($profile_name, $task_name) {
+        $query = $this->wpdb->prepare(
+            "SELECT * FROM {$this->table_name} WHERE profile_name like %s and task_name like %s order by log_id desc",
+            ['%'. $profile_name . '%', '%'. $task_name. '%']
+        );
+        $query = $this->wpdb->remove_placeholder_escape($query);
         $results = $this->wpdb->get_results($query);
 
         if (empty($results)) {
@@ -117,10 +140,11 @@ class HexaSyncLogRepository {
      */
     public function getByTaskName($task_name) {
         $query = $this->wpdb->prepare(
-            "SELECT log_id, message, profile_id, profile_name, action_type, log_detail_id, reference_info, error, task_id, task_name, task_status, executed_at, execute_at, retry_count, push_note, created_at, updated_at FROM {$this->table_name} WHERE task_name = %s",
-            $task_name
+            "SELECT * FROM {$this->table_name} WHERE task_name like %s order by log_id desc",
+            '%'. $task_name. '%'
         );
 
+        $query = $this->wpdb->remove_placeholder_escape($query);
         $results = $this->wpdb->get_results($query);
 
         if (empty($results)) {
