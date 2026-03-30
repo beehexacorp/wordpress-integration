@@ -18,7 +18,7 @@ class AdminMenu
             'hexasync-logs',
             [AdminSyncLogPage::class, 'hexasync_logs_page'],
             'dashicons-list-view',
-            25
+            100
         );
     }
 }

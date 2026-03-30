@@ -1,5 +1,4 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * HexaSyncLogAPI - REST API for managing HexaSync Logs
  *
@@ -7,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 namespace Beehexa\API;
 
+if ( ! defined( 'ABSPATH' ) ) exit;
 class JsonBasicAuth
 {
 
