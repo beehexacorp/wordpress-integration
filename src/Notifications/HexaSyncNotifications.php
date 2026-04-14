@@ -143,7 +143,7 @@ class HexaSyncNotifications {
      */
     public function add_settings_submenu() {
         add_submenu_page(
-            'hexasync-logs',
+            'hexasync',
             'HexaSync Notifications',
             'Notifications',
             'manage_options',

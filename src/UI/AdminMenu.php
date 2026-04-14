@@ -15,10 +15,19 @@ class AdminMenu
             'HexaSync',
             'HexaSync',
             'manage_options',
-            'hexasync-logs',
-            [AdminSyncLogPage::class, 'hexasync_logs_page'],
+            'hexasync',
+            null,
             'dashicons-list-view',
             100
+        );
+
+        add_submenu_page(
+            'hexasync',
+            'HexaSync Logs',
+            'Logs',
+            'manage_options',
+            'hexasync-logs',
+            [AdminSyncLogPage::class, 'hexasync_logs_page']
         );
     }
 }
