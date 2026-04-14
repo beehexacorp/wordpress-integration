@@ -128,6 +128,10 @@ class HexaSyncLogAPI {
                                 'type' => 'string',
                                 'description' => 'Reference information',
                             ],
+                            'item_id' => [
+                                'type' => 'string',
+                                'description' => 'Item ID',
+                            ],
                             'error' => [
                                 'type' => 'string',
                                 'description' => 'Error message',
@@ -313,6 +317,9 @@ class HexaSyncLogAPI {
         if (!empty($log_data['reference_info'])) {
             $dto->setReferenceInfo($log_data['reference_info']);
         }
+        if (!empty($log_data['item_id'])) {
+            $dto->setItemId($log_data['item_id']);
+        }
         if (!empty($log_data['error'])) {
             $dto->setError($log_data['error']);
         }
@@ -391,6 +398,9 @@ class HexaSyncLogAPI {
         }
         if (!empty($log_data['reference_info'])) {
             $log->setReferenceInfo($log_data['reference_info']);
+        }
+        if (!empty($log_data['item_id'])) {
+            $log->setItemId($log_data['item_id']);
         }
         if (!empty($log_data['error'])) {
             $log->setError($log_data['error']);

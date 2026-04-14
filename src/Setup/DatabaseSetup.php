@@ -23,7 +23,9 @@ class DatabaseSetup
         profile_id VARCHAR(255) COMMENT 'Profile UUID',
         profile_name VARCHAR(500) NOT NULL COMMENT 'Profile name',        action_type VARCHAR(100) COMMENT 'Action type (e.g., Automatic)',
         log_detail_id VARCHAR(255) COMMENT 'Log detail UUID',
-        reference_info VARCHAR(500) COMMENT 'Reference information',        error LONGTEXT COMMENT 'Error message/details',
+        reference_info VARCHAR(500) COMMENT 'Reference information',
+        item_id VARCHAR(255) COMMENT 'Item ID',
+        error LONGTEXT COMMENT 'Error message/details',
         task_id VARCHAR(255) COMMENT 'Task UUID',
         task_name VARCHAR(500) NOT NULL COMMENT 'Task name',
         task_status VARCHAR(100) COMMENT 'Task status (e.g., Failed, Completed)',        executed_at varchar(255) COMMENT 'Execution timestamp (e.g., Feb 25, 2026 21:38:42)',
@@ -40,9 +42,43 @@ class DatabaseSetup
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
+
+        // Check if item_id column exists, if not, add it
+        $column_exists = $wpdb->get_results($wpdb->prepare(
+            "SHOW COLUMNS FROM %i LIKE 'item_id'",
+            $table_name
+        ));
+
+        if (empty($column_exists)) {
+            // Add the item_id column
+            $wpdb->query($wpdb->prepare(
+                "ALTER TABLE %i ADD COLUMN item_id VARCHAR(255) COMMENT 'Item ID' AFTER reference_info",
+                $table_name
+            ));
+        }
+
+        // Trigger activation action
+        do_action('hexasync_plugin_activated');
     }
 
     public static function hexasync_update_plugin(){
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'hexasync_log';
+
+        // Check if item_id column exists, if not, add it
+        $column_exists = $wpdb->get_results($wpdb->prepare(
+            "SHOW COLUMNS FROM %i LIKE 'item_id'",
+            $table_name
+        ));
+
+        if (empty($column_exists)) {
+            // Add the item_id column
+            $wpdb->query($wpdb->prepare(
+                "ALTER TABLE %i ADD COLUMN item_id VARCHAR(255) COMMENT 'Item ID' AFTER reference_info",
+                $table_name
+            ));
+        }
+
         return true;
     }
 }

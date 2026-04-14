@@ -47,6 +47,11 @@ class HexaSyncLogDTO {
     /**
      * @var string
      */
+    private $item_id;
+
+    /**
+     * @var string
+     */
     private $error;
 
     /**
@@ -245,6 +250,26 @@ class HexaSyncLogDTO {
      */
     public function setReferenceInfo($reference_info) {
         $this->reference_info = $reference_info;
+        return $this;
+    }
+
+    /**
+     * Get item ID
+     *
+     * @return string
+     */
+    public function getItemId() {
+        return $this->item_id ?? '';
+    }
+
+    /**
+     * Set item ID
+     *
+     * @param string $item_id
+     * @return $this
+     */
+    public function setItemId($item_id) {
+        $this->item_id = $item_id;
         return $this;
     }
 
@@ -462,6 +487,7 @@ class HexaSyncLogDTO {
             'action_type' => $this->getActionType(),
             'log_detail_id' => $this->getLogDetailId(),
             'reference_info' => $this->getReferenceInfo(),
+            'item_id' => $this->getItemId(),
             'error' => $this->getError(),
             'task_id' => $this->getTaskId(),
             'task_name' => $this->task_name,
@@ -493,6 +519,7 @@ class HexaSyncLogDTO {
             ->setActionType($data['action_type'] ?? '')
             ->setLogDetailId($data['log_detail_id'] ?? '')
             ->setReferenceInfo($data['reference_info'] ?? '')
+            ->setItemId($data['item_id'] ?? '')
             ->setError($data['error'] ?? '')
             ->setTaskId($data['task_id'] ?? '')
             ->setTaskStatus($data['task_status'] ?? '')
@@ -506,4 +533,3 @@ class HexaSyncLogDTO {
         return $dto;
     }
 }
-

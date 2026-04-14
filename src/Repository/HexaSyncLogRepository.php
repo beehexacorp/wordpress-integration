@@ -171,6 +171,7 @@ class HexaSyncLogRepository {
             'action_type' => $dto->getActionType(),
             'log_detail_id' => $dto->getLogDetailId(),
             'reference_info' => $dto->getReferenceInfo(),
+            'item_id' => $dto->getItemId(),
             'error' => $dto->getError(),
             'task_id' => $dto->getTaskId(),
             'task_name' => $dto->getTaskName(),
@@ -181,7 +182,7 @@ class HexaSyncLogRepository {
             'push_note' => $dto->getPushNote(),
         ];
 
-        $format = ['%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s'];
+        $format = ['%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s'];
 
         if ($dto->getId()) {
             // Update existing
@@ -244,5 +245,28 @@ class HexaSyncLogRepository {
     private function hydrateDTO($data) {
         return \Beehexa\DTO\HexaSyncLogDTO::fromArray($data);
     }
-}
 
+    /**
+     * Get logs created since a timestamp
+     *
+     * @param int $timestamp
+     * @return \Beehexa\DTO\HexaSyncLogDTO[]
+     */
+    public function getLogsSince($timestamp) {
+        global $wpdb;
+        // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnsupportedIdentifierPlaceholder,WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $results = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT * FROM %i WHERE created_at > %s ORDER BY created_at DESC",
+                    $this->table_name, date('Y-m-d H:i:s', $timestamp)
+                ));
+
+        if (empty($results)) {
+            return [];
+        }
+
+        return array_map(function($row) {
+            return $this->hydrateDTO((array)$row);
+        }, $results);
+    }
+}

@@ -20,13 +20,16 @@ class AdminSyncLogPage
         // Get filter parameters from query string
         $filter_profile = isset($_GET['filter_profile']) ? sanitize_text_field(wp_unslash($_GET['filter_profile'])) : '';
         $filter_task = isset($_GET['filter_task']) ? sanitize_text_field(wp_unslash($_GET['filter_task'])) : '';
+        $filter_reference = isset($_GET['filter_reference']) ? sanitize_text_field(wp_unslash($_GET['filter_reference'])) : '';
         $current_page = isset($_GET['paged']) ? absint(wp_unslash($_GET['paged'])) : 1;
 
         if(wp_verify_nonce($filter_profile, 'set_options') &&
         wp_verify_nonce($filter_task, 'set_options') &&
+        wp_verify_nonce($filter_reference, 'set_options') &&
         wp_verify_nonce($current_page, 'set_options')){
             $filter_profile = '';
             $filter_task = '';
+            $filter_reference = '';
             $current_page = 1;
         }
         // Set up pagination
@@ -34,14 +37,23 @@ class AdminSyncLogPage
         $offset = ($current_page - 1) * $per_page;
 
         // Get logs based on filters
-        if($filter_profile && $filter_task){
-            $logs = $repository->getByProfileAndTaskName($filter_profile, $filter_task);
-        } elseif ($filter_profile) {
-            $logs = $repository->getByProfileName($filter_profile);
-        } elseif ($filter_task) {
-            $logs = $repository->getByTaskName($filter_task);
-        } else {
-            $logs = $repository->getAll();
+        $logs = $repository->getAll();
+
+        // Apply filters
+        if ($filter_profile) {
+            $logs = array_filter($logs, function($log) use ($filter_profile) {
+                return stripos($log->getProfileName(), $filter_profile) !== false;
+            });
+        }
+        if ($filter_task) {
+            $logs = array_filter($logs, function($log) use ($filter_task) {
+                return stripos($log->getTaskName(), $filter_task) !== false;
+            });
+        }
+        if ($filter_reference) {
+            $logs = array_filter($logs, function($log) use ($filter_reference) {
+                return stripos($log->getReferenceInfo(), $filter_reference) !== false;
+            });
         }
 
         // Calculate pagination
@@ -71,6 +83,9 @@ class AdminSyncLogPage
         if ($filter_task) {
             $filter_url_params['filter_task'] = urlencode($filter_task);
         }
+        if ($filter_reference) {
+            $filter_url_params['filter_reference'] = urlencode($filter_reference);
+        }
         $filter_query_string = !empty($filter_url_params) ? '&' . implode('&', array_map(function($k, $v) { return "$k=$v"; }, array_keys($filter_url_params), $filter_url_params)) : '';
 
         ?>
@@ -96,8 +111,15 @@ class AdminSyncLogPage
                         <input type="text" name="filter_task" id="filter_task" value="<?php echo esc_attr($filter_task); ?>" placeholder="Enter task name..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;" />
                     </div>
 
+                    <div style="flex: 1; min-width: 200px;">
+                        <label for="filter_reference" style="display: block; margin-bottom: 5px; font-weight: bold;">
+                            Filter by Reference Info:
+                        </label>
+                        <input type="text" name="filter_reference" id="filter_reference" value="<?php echo esc_attr($filter_reference); ?>" placeholder="Enter reference info..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;" />
+                    </div>
+
                     <button type="submit" class="button button-primary" style="margin-top: 23px;">Filter</button>
-                    <?php if ($filter_profile || $filter_task): ?>
+                    <?php if ($filter_profile || $filter_task || $filter_reference): ?>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=hexasync-logs')); ?>" class="button">Clear Filters</a>
                     <?php endif; ?>
                 </form>
@@ -106,7 +128,7 @@ class AdminSyncLogPage
             <!-- Results info -->
             <p style="margin: 10px 0; color: #666;">
                 Showing <strong><?php echo esc_html($offset + 1); ?></strong> to <strong><?php echo esc_html(min($offset + $per_page, $total_logs)); ?></strong> of <strong><?php echo esc_html($total_logs); ?></strong> logs
-                <?php if ($filter_profile || $filter_task): ?>
+                <?php if ($filter_profile || $filter_task || $filter_reference): ?>
                     <em>(Filtered)</em>
                 <?php endif; ?>
             </p>
