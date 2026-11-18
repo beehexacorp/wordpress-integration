@@ -4,7 +4,7 @@ Tags: woocommerce, erp, quickbooks, inventory sync, order sync
 Requires at least: 6.2
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,11 @@ Use the support forum for this plugin, or [contact Beehexa](https://www.beehexa.
 4. Connection guide: step-by-step setup to connect WooCommerce to HexaSync.
 
 == Changelog ==
+
+= 1.2.2 =
+* Add Vietnamese translation; all admin pages, notices and notification emails are now translatable.
+* Logs page shows "0 to 0" instead of "1 to 0" when there are no logs.
+* Plugin name updated to match the WordPress.org listing.
 
 = 1.2.1 =
 * Add email notifications for new sync logs, with a Notifications settings page.
