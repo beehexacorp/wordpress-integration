@@ -75,6 +75,7 @@ Upload the [Beehexa](https://www.beehexa.com/) plugin to your blog into **wp-con
 1. HexaSync Logs: sync history with filters by profile name, task name and reference info.
 2. Notification settings: enable email alerts and set the recipients for new logs.
 3. Sign in to your Beehexa account to manage HexaSync profiles.
+4. Connection guide: step-by-step setup to connect WooCommerce to HexaSync.
 
 ## Changelog
 ### 1.2.1
