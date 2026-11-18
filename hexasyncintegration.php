@@ -25,6 +25,7 @@ use Beehexa\UI\AdminSyncLogPage;
 require_once plugin_dir_path(__FILE__) . 'src/API/JsonBasicAuth.php';
 require_once plugin_dir_path(__FILE__) . 'src/DTO/HexaSyncLogDTO.php';
 require_once plugin_dir_path(__FILE__) . 'src/UI/AdminMenu.php';
+require_once plugin_dir_path(__FILE__) . 'src/UI/AdminConnectionGuidePage.php';
 require_once plugin_dir_path(__FILE__) . 'src/UI/AdminSyncLogPage.php';
 require_once plugin_dir_path(__FILE__) . 'src/Repository/HexaSyncLogRepository.php';
 require_once plugin_dir_path(__FILE__) . 'src/API/HexaSyncLogAPI.php';

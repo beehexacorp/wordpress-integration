@@ -16,7 +16,7 @@ class AdminMenu
             'HexaSync',
             'manage_options',
             'hexasync',
-            null,
+            [AdminConnectionGuidePage::class, 'hexasync_connection_guide_page'],
             'dashicons-list-view',
             100
         );

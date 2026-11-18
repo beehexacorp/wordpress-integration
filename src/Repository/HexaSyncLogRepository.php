@@ -258,7 +258,7 @@ class HexaSyncLogRepository {
         $results = $wpdb->get_results(
                 $wpdb->prepare(
                     "SELECT * FROM %i WHERE created_at > %s ORDER BY created_at DESC",
-                    $this->table_name, date('Y-m-d H:i:s', $timestamp)
+                    $this->table_name, gmdate('Y-m-d H:i:s', $timestamp)
                 ));
 
         if (empty($results)) {

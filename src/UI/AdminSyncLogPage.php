@@ -204,7 +204,7 @@ class AdminSyncLogPage
 
                         // Build HexaSync URL
                         $hexasync_url = sprintf(
-                            'https://beta.hexasync.com/monitoring/profiles/%s/jobs?type=sync-history&id=%s',
+                            'https://app.hexasync.com/monitoring/profiles/%s/jobs?type=sync-history&id=%s',
                             urlencode($log->getProfileId()),
                             urlencode($log->getLogDetailId())
                         );

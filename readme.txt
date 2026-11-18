@@ -2,7 +2,7 @@
 Contributors: beehexa
 Requires at least: 6.2
 Tested up to: 6.9
-Stable tag: 1.1.1
+Stable tag: 1.2.1
 License: GPLv2 or later
 A SaaS Integration Platform that helps businesses automate their operations
 
@@ -70,7 +70,19 @@ Upload the [Beehexa](https://www.beehexa.com/) plugin to your blog into **wp-con
 
 1, 2, 3: You're done!
 
+## Screenshots
+
+1. HexaSync Logs: sync history with filters by profile name, task name and reference info.
+2. Notification settings: enable email alerts and set the recipients for new logs.
+3. Sign in to your Beehexa account to manage HexaSync profiles.
+
 ## Changelog
+### 1.2.1
+- Add email notifications for new sync logs, with a Notifications settings page.
+- Add filter by reference info on the HexaSync Logs page.
+- Add a WooCommerce connection guide as the main HexaSync admin page.
+- "View on HexaSync" links now open app.hexasync.com.
+
 ### 1.1.0
 - Initial release of HexaSync plugin for WordPress.
 - Provide an easy way to integrate HexaSync with WordPress sites for enhanced data synchronization and automation capabilities.

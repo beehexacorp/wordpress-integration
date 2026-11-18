@@ -43,7 +43,7 @@ class HexaSyncNotifications {
         add_filter('cron_schedules', function($schedules) {
             $schedules['twelve_hours'] = [
                 'interval' => 12 * HOUR_IN_SECONDS,
-                'display' => __('Every 12 Hours')
+                'display' => __('Every 12 Hours', 'hexasyncintegration')
             ];
             return $schedules;
         });
@@ -105,9 +105,11 @@ class HexaSyncNotifications {
         $output = [];
 
         $output['enabled'] = isset($input['enabled']) ? 1 : 0;
+        $output['emails'] = [];
         if(!empty($input['emails'])) {
             $emails = explode(",", $input['emails']);
-            $output['emails'] = array_map('trim', array_filter($emails));
+            $emails = array_map('sanitize_email', array_map('trim', $emails));
+            $output['emails'] = array_values(array_filter($emails));
         }
         return $output;
     }
@@ -124,8 +126,8 @@ class HexaSyncNotifications {
      */
     public function enable_field_callback() {
         $options = get_option(self::OPTION_NAME, ['enabled' => 0, 'emails' => []]);
-        $checked = isset($options['enabled']) && $options['enabled'] ? 'checked' : '';
-        echo '<input type="checkbox" name="' . self::OPTION_NAME . '[enabled]" value="1" ' . $checked . ' />';
+        $enabled = !empty($options['enabled']);
+        echo '<input type="checkbox" name="' . esc_attr(self::OPTION_NAME . '[enabled]') . '" value="1" ' . checked($enabled, true, false) . ' />';
     }
 
     /**
@@ -134,7 +136,7 @@ class HexaSyncNotifications {
     public function emails_field_callback() {
         $options = get_option(self::OPTION_NAME, ['enabled' => 0, 'emails' => []]);
         $emails = isset($options['emails']) ? implode(", ", $options['emails']) : '';
-        echo '<textarea name="' . self::OPTION_NAME . '[emails]" rows="2" cols="50">' . esc_textarea($emails) . '</textarea>';
+        echo '<textarea name="' . esc_attr(self::OPTION_NAME . '[emails]') . '" rows="2" cols="50">' . esc_textarea($emails) . '</textarea>';
         echo '<p class="description">Enter emails separated by commas.</p>';
     }
 
@@ -227,7 +229,7 @@ class HexaSyncNotifications {
 
         $site_name = get_bloginfo('name');
         $site_url = get_site_url();
-        $domain = parse_url($site_url, PHP_URL_HOST);
+        $domain = wp_parse_url($site_url, PHP_URL_HOST);
 
         $from_email = 'noreply@' . $domain;
         $from_name = $site_name . ' Admin';
@@ -241,8 +243,8 @@ class HexaSyncNotifications {
 
         $message = "<p>New Sync logs have been added to the HexaSync Log monitor.</p>";
         $message .= "<p>Total new logs: " . count($logs) . "</p>";
-        $message .= "<p><a href='" . admin_url('admin.php?page=hexasync-logs') . "'>View logs</a></p>";
-        $message .= "<p>Site: <a href='" . $site_url . "'>" . $site_url . "</a></p>";
+        $message .= "<p><a href='" . esc_url(admin_url('admin.php?page=hexasync-logs')) . "'>View logs</a></p>";
+        $message .= "<p>Site: <a href='" . esc_url($site_url) . "'>" . esc_html($site_url) . "</a></p>";
 
         wp_mail($emails, $subject, $message, $headers);
     }
@@ -253,7 +255,9 @@ class HexaSyncNotifications {
     public function show_admin_notice() {
         if ($count = get_transient('hexasync_new_logs_notice')) {
             echo '<div class="notice notice-success is-dismissible">';
-            echo '<p>' . sprintf(_n('You have %s new HexaSync log.', 'You have %s new HexaSync logs.', $count, 'hexasync'), number_format_i18n($count)) . '</p>';
+            /* translators: %s: number of new HexaSync logs */
+            $text = sprintf(_n('You have %s new HexaSync log.', 'You have %s new HexaSync logs.', $count, 'hexasyncintegration'), number_format_i18n($count));
+            echo '<p>' . esc_html($text) . '</p>';
             echo '</div>';
         }
     }
