@@ -1,0 +1,318 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: HexaSync SaaS Integration Platform by Beehexa 1.2.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/hexasyncintegration\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-11-18 11:16+0000\n"
+"X-Domain: hexasyncintegration\n"
+"PO-Revision-Date: 2026-11-18 11:16+0000\n"
+"Language-Team: Vietnamese\n"
+"Language: vi\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. Description of the plugin
+#: hexasyncintegration.php
+msgid "Through years of experience working with global retailers, manufacturers, and distributors, Beehexa has developed the HexaSync Automation Engine — a unified platform that connects and automates processes across eCommerce, Accounting, ERP, POS, CRM, GenAI, and other enterprise systems."
+msgstr "Từ nhiều năm kinh nghiệm làm việc với các nhà bán lẻ, nhà sản xuất và nhà phân phối trên toàn cầu, Beehexa đã phát triển HexaSync Automation Engine — nền tảng hợp nhất giúp kết nối và tự động hóa quy trình giữa thương mại điện tử, kế toán, ERP, POS, CRM, GenAI và các hệ thống doanh nghiệp khác."
+
+#. Plugin Name of the plugin
+#: hexasyncintegration.php
+msgid "HexaSync SaaS Integration Platform by Beehexa"
+msgstr "HexaSync SaaS Integration Platform by Beehexa"
+
+#: src/Notifications/HexaSyncNotifications.php:46
+msgid "Every 12 Hours"
+msgstr "Mỗi 12 giờ"
+
+#: src/Notifications/HexaSyncNotifications.php:79
+#: src/Notifications/HexaSyncNotifications.php:163
+msgid "HexaSync Notification Settings"
+msgstr "Cài đặt thông báo HexaSync"
+
+#: src/Notifications/HexaSyncNotifications.php:86
+msgid "Enable Email Notifications"
+msgstr "Bật thông báo qua email"
+
+#: src/Notifications/HexaSyncNotifications.php:94
+msgid "Notification Emails"
+msgstr "Email nhận thông báo"
+
+#: src/Notifications/HexaSyncNotifications.php:121
+msgid "Configure email notifications for new HexaSync logs."
+msgstr "Cấu hình thông báo qua email khi có nhật ký HexaSync mới."
+
+#: src/Notifications/HexaSyncNotifications.php:140
+msgid "Enter emails separated by commas."
+msgstr "Nhập các địa chỉ email, cách nhau bằng dấu phẩy."
+
+#: src/Notifications/HexaSyncNotifications.php:149
+msgid "HexaSync Notifications"
+msgstr "Thông báo HexaSync"
+
+#: src/Notifications/HexaSyncNotifications.php:150
+msgid "Notifications"
+msgstr "Thông báo"
+
+#. translators: %s: site name
+#: src/Notifications/HexaSyncNotifications.php:236
+msgid "%s Admin"
+msgstr "Quản trị %s"
+
+#. translators: %s: site name
+#: src/Notifications/HexaSyncNotifications.php:239
+msgid "New HexaSync Logs - %s"
+msgstr "Nhật ký HexaSync mới - %s"
+
+#: src/Notifications/HexaSyncNotifications.php:246
+msgid "New Sync logs have been added to the HexaSync Log monitor."
+msgstr "Có nhật ký đồng bộ mới được thêm vào trang theo dõi nhật ký HexaSync."
+
+#. translators: %s: number of new logs
+#: src/Notifications/HexaSyncNotifications.php:248
+msgid "Total new logs: %s"
+msgstr "Tổng số nhật ký mới: %s"
+
+#: src/Notifications/HexaSyncNotifications.php:249
+msgid "View logs"
+msgstr "Xem nhật ký"
+
+#: src/Notifications/HexaSyncNotifications.php:250
+msgid "Site:"
+msgstr "Trang web:"
+
+#. translators: %s: number of new HexaSync logs
+#: src/Notifications/HexaSyncNotifications.php:262
+msgid "You have %s new HexaSync log."
+msgid_plural "You have %s new HexaSync logs."
+msgstr[0] "Bạn có %s nhật ký HexaSync mới."
+
+#: src/UI/AdminConnectionGuidePage.php:29
+msgid "Connect WooCommerce to HexaSync"
+msgstr "Kết nối WooCommerce với HexaSync"
+
+#: src/UI/AdminConnectionGuidePage.php:31
+msgid "Follow this setup guide to connect your WooCommerce store with HexaSync for product, order, and customer sync."
+msgstr "Làm theo hướng dẫn này để kết nối cửa hàng WooCommerce với HexaSync, đồng bộ sản phẩm, đơn hàng và khách hàng."
+
+#: src/UI/AdminConnectionGuidePage.php:35
+msgid "Step 1: Prepare your store"
+msgstr "Bước 1: Chuẩn bị cửa hàng"
+
+#: src/UI/AdminConnectionGuidePage.php:37
+msgid "Make sure WooCommerce is installed and active."
+msgstr "Đảm bảo WooCommerce đã được cài đặt và kích hoạt."
+
+#: src/UI/AdminConnectionGuidePage.php:38
+msgid "Confirm your store can access the internet and WordPress cron is running."
+msgstr "Xác nhận cửa hàng truy cập được Internet và WordPress cron đang chạy."
+
+#: src/UI/AdminConnectionGuidePage.php:39
+msgid "Ensure your site uses HTTPS for secure API communication."
+msgstr "Đảm bảo trang web dùng HTTPS để giao tiếp API an toàn."
+
+#: src/UI/AdminConnectionGuidePage.php:44
+msgid "Step 2: Create WooCommerce API keys"
+msgstr "Bước 2: Tạo khóa API WooCommerce"
+
+#. translators: %s: URL of the WooCommerce REST API keys screen
+#: src/UI/AdminConnectionGuidePage.php:48
+msgid "Open <a href=\"%s\">WooCommerce REST API keys</a>."
+msgstr "Mở trang <a href=\"%s\">khóa REST API của WooCommerce</a>."
+
+#: src/UI/AdminConnectionGuidePage.php:50
+msgid "Click <strong>Add key</strong>."
+msgstr "Nhấn <strong>Add key</strong> (Thêm khóa)."
+
+#: src/UI/AdminConnectionGuidePage.php:51
+msgid "Set permissions to <strong>Read/Write</strong>."
+msgstr "Đặt quyền là <strong>Read/Write</strong> (Đọc/Ghi)."
+
+#: src/UI/AdminConnectionGuidePage.php:52
+msgid "Copy the <strong>Consumer key</strong> and <strong>Consumer secret</strong>."
+msgstr "Sao chép <strong>Consumer key</strong> và <strong>Consumer secret</strong>."
+
+#: src/UI/AdminConnectionGuidePage.php:54
+msgid "Keep both keys secure. You will add them in HexaSync connection settings."
+msgstr "Hãy giữ bí mật cả hai khóa. Bạn sẽ nhập chúng trong phần cài đặt kết nối của HexaSync."
+
+#: src/UI/AdminConnectionGuidePage.php:58
+msgid "Step 3: Connect in HexaSync"
+msgstr "Bước 3: Kết nối trong HexaSync"
+
+#: src/UI/AdminConnectionGuidePage.php:60
+msgid "Log in to your HexaSync workspace."
+msgstr "Đăng nhập vào không gian làm việc HexaSync của bạn."
+
+#: src/UI/AdminConnectionGuidePage.php:61
+msgid "Create a new profile and choose WooCommerce as source or destination."
+msgstr "Tạo profile mới và chọn WooCommerce làm nguồn hoặc đích."
+
+#: src/UI/AdminConnectionGuidePage.php:62
+msgid "Enter your store URL, Consumer key, and Consumer secret."
+msgstr "Nhập URL cửa hàng, Consumer key và Consumer secret."
+
+#: src/UI/AdminConnectionGuidePage.php:63
+msgid "Run the connection test and save when it succeeds."
+msgstr "Chạy kiểm tra kết nối và lưu lại khi thành công."
+
+#: src/UI/AdminConnectionGuidePage.php:68
+msgid "Step 4: Optional webhook setup"
+msgstr "Bước 4: Thiết lập webhook (không bắt buộc)"
+
+#. translators: %s: URL of the WooCommerce webhooks screen
+#: src/UI/AdminConnectionGuidePage.php:72
+msgid "Open <a href=\"%s\">WooCommerce Webhooks</a>."
+msgstr "Mở trang <a href=\"%s\">Webhook của WooCommerce</a>."
+
+#: src/UI/AdminConnectionGuidePage.php:74
+msgid "Create webhooks for events you want to sync in near real time (for example: order created/updated)."
+msgstr "Tạo webhook cho các sự kiện cần đồng bộ gần như tức thời (ví dụ: đơn hàng được tạo/cập nhật)."
+
+#: src/UI/AdminConnectionGuidePage.php:75
+msgid "Use the webhook URL provided by your HexaSync flow."
+msgstr "Dùng URL webhook do luồng HexaSync của bạn cung cấp."
+
+#: src/UI/AdminConnectionGuidePage.php:80
+msgid "Troubleshooting checklist"
+msgstr "Danh sách kiểm tra khi gặp sự cố"
+
+#: src/UI/AdminConnectionGuidePage.php:82
+msgid "API key permissions are Read/Write."
+msgstr "Khóa API có quyền Read/Write (Đọc/Ghi)."
+
+#: src/UI/AdminConnectionGuidePage.php:83
+msgid "Store URL in HexaSync exactly matches your WordPress site URL."
+msgstr "URL cửa hàng trong HexaSync khớp chính xác với URL trang WordPress."
+
+#: src/UI/AdminConnectionGuidePage.php:84
+msgid "No firewall or security plugin blocks incoming/outgoing API requests."
+msgstr "Không có tường lửa hay plugin bảo mật nào chặn yêu cầu API đến/đi."
+
+#: src/UI/AdminConnectionGuidePage.php:85
+msgid "Server time and timezone are correct."
+msgstr "Thời gian và múi giờ của máy chủ chính xác."
+
+#. translators: %s: URL of the HexaSync Logs admin page
+#: src/UI/AdminConnectionGuidePage.php:92
+msgid "Need sync history and debug details? Go to <a href=\"%s\">HexaSync Logs</a>."
+msgstr "Cần xem lịch sử đồng bộ và chi tiết lỗi? Vào <a href=\"%s\">Nhật ký HexaSync</a>."
+
+#: src/UI/AdminMenu.php:26 src/UI/AdminSyncLogPage.php:93
+msgid "HexaSync Logs"
+msgstr "Nhật ký HexaSync"
+
+#: src/UI/AdminMenu.php:27
+msgid "Logs"
+msgstr "Nhật ký"
+
+#: src/UI/AdminSyncLogPage.php:102
+msgid "Filter by Profile Name:"
+msgstr "Lọc theo tên profile:"
+
+#: src/UI/AdminSyncLogPage.php:104
+msgid "Enter profile name..."
+msgstr "Nhập tên profile..."
+
+#: src/UI/AdminSyncLogPage.php:109
+msgid "Filter by Task Name:"
+msgstr "Lọc theo tên tác vụ:"
+
+#: src/UI/AdminSyncLogPage.php:111
+msgid "Enter task name..."
+msgstr "Nhập tên tác vụ..."
+
+#: src/UI/AdminSyncLogPage.php:116
+msgid "Filter by Reference Info:"
+msgstr "Lọc theo thông tin tham chiếu:"
+
+#: src/UI/AdminSyncLogPage.php:118
+msgid "Enter reference info..."
+msgstr "Nhập thông tin tham chiếu..."
+
+#: src/UI/AdminSyncLogPage.php:121
+msgid "Filter"
+msgstr "Lọc"
+
+#: src/UI/AdminSyncLogPage.php:123
+msgid "Clear Filters"
+msgstr "Xóa bộ lọc"
+
+#. translators: 1: first row number, 2: last row number, 3: total number of
+#. logs
+#: src/UI/AdminSyncLogPage.php:134
+msgid "Showing <strong>%1$s</strong> to <strong>%2$s</strong> of <strong>%3$s</strong> logs"
+msgstr "Hiển thị <strong>%1$s</strong> đến <strong>%2$s</strong> trong tổng số <strong>%3$s</strong> nhật ký"
+
+#: src/UI/AdminSyncLogPage.php:143
+msgid "(Filtered)"
+msgstr "(Đã lọc)"
+
+#: src/UI/AdminSyncLogPage.php:186
+msgid "Log ID"
+msgstr "Mã nhật ký"
+
+#: src/UI/AdminSyncLogPage.php:187
+msgid "Profile Name"
+msgstr "Tên profile"
+
+#: src/UI/AdminSyncLogPage.php:188
+msgid "Task Name"
+msgstr "Tên tác vụ"
+
+#: src/UI/AdminSyncLogPage.php:189
+msgid "Action Type"
+msgstr "Loại thao tác"
+
+#: src/UI/AdminSyncLogPage.php:190
+msgid "Reference Info"
+msgstr "Thông tin tham chiếu"
+
+#: src/UI/AdminSyncLogPage.php:191
+msgid "Message"
+msgstr "Thông điệp"
+
+#: src/UI/AdminSyncLogPage.php:192
+msgid "Error"
+msgstr "Lỗi"
+
+#: src/UI/AdminSyncLogPage.php:193
+msgid "Push Note"
+msgstr "Ghi chú đẩy"
+
+#: src/UI/AdminSyncLogPage.php:194
+msgid "Status"
+msgstr "Trạng thái"
+
+#: src/UI/AdminSyncLogPage.php:195
+msgid "Execute At"
+msgstr "Lịch thực thi"
+
+#: src/UI/AdminSyncLogPage.php:196
+msgid "Executed At"
+msgstr "Đã thực thi lúc"
+
+#: src/UI/AdminSyncLogPage.php:197
+msgid "Retries"
+msgstr "Số lần thử lại"
+
+#: src/UI/AdminSyncLogPage.php:198
+msgid "Created At"
+msgstr "Ngày tạo"
+
+#: src/UI/AdminSyncLogPage.php:250
+msgid "View on HexaSync"
+msgstr "Xem trên HexaSync"
+
+#: src/UI/AdminSyncLogPage.php:260
+msgid "No logs found"
+msgstr "Không tìm thấy nhật ký"
+
+#: src/UI/AdminSyncLogPage.php:273
+msgid "← Previous"
+msgstr "← Trước"
+
+#: src/UI/AdminSyncLogPage.php:305
+msgid "Next →"
+msgstr "Sau →"

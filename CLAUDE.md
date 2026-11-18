@@ -1,0 +1,77 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## What this is
+
+A WordPress plugin (`hexasyncintegration`, published on WordPress.org by Beehexa) that turns a WordPress site into a log sink for the HexaSync integration platform. HexaSync pushes sync-transaction logs to the site over REST; the plugin stores them in a custom table, shows them in wp-admin, and emails a digest when new ones arrive. It does not sync WooCommerce data itself: that goes through WooCommerce's own REST API keys, which the "Connection guide" admin page tells the store owner how to create.
+
+## Commands
+
+There is no build step, no Composer/npm, no test suite and no linter config. The plugin is plain PHP loaded straight from this directory by the surrounding WordPress install (`defaultwp.local`).
+
+- Syntax check a file: `php -l src/API/HexaSyncLogAPI.php`
+- Re-run table creation and cron scheduling: deactivate and reactivate the plugin (activation is the only place both happen).
+- Exercise the API (Basic Auth with a WordPress administrator's username and password):
+  ```bash
+  curl -u USER:PASS https://<site>/wp-json/beehexa/v1/hexasync/health
+  curl -u USER:PASS -H 'Content-Type: application/json' \
+    -d '{"log":{"profile_name":"P","task_name":"T","task_status":"Failed","item_id":"123"}}' \
+    https://<site>/wp-json/beehexa/v1/hexasync/log
+  ```
+
+- Regenerate translations after adding or changing any UI string: `php tools/i18n/build.php` (see Translations below).
+
+The `// phpcs:ignore WordPress.DB...` comments exist to pass WordPress.org's Plugin Check review. Keep them (and add the equivalent) when touching `$wpdb` queries, and keep every output escaped (`esc_html`, `esc_attr`, `esc_url`) and every input `wp_unslash` + sanitised, since the plugin is reviewed against those rules.
+
+## Architecture
+
+`hexasyncintegration.php` is the whole bootstrap: it `require_once`s every class file by hand and wires all hooks. **There is no autoloader**, so a new class under `src/` does nothing until it is added to that require list. Namespaces are `Beehexa\<Folder>` mirroring `src/<Folder>/`.
+
+Data path, end to end:
+
+1. **Auth** (`src/API/JsonBasicAuth.php`) hooks `determine_current_user` so HTTP Basic credentials are checked with `wp_authenticate()` (real account password, not application passwords). It applies to every REST request on the site, not just this plugin's routes.
+2. **REST** (`src/API/HexaSyncLogAPI.php`) registers namespace `beehexa/v1/hexasync`: `GET /health`, `GET|POST /log`, `GET|POST|DELETE /log/{id}`. All routes require `manage_options`.
+3. **DTO** (`src/DTO/HexaSyncLogDTO.php`) is the single shape for a log row; `fromArray()`/`toArray()` use the column names directly.
+4. **Repository** (`src/Repository/HexaSyncLogRepository.php`) is the only code that touches the table `{$wpdb->prefix}hexasync_log`. `save()` inserts or updates depending on whether the DTO has an id.
+5. **Admin UI** (`src/UI/`) and **Notifications** (`src/Notifications/HexaSyncNotifications.php`) read through the repository.
+
+Admin menu: top-level `hexasync` (connection guide) and the `hexasync-logs` submenu are registered in `AdminMenu`; the `hexasync-notifications` submenu is registered separately inside `HexaSyncNotifications::add_settings_submenu()`.
+
+### Things that are not obvious from one file
+
+- **API contract quirks.** Request bodies are wrapped: `{"log": {...}}`. Update is `POST /log/{id}`, not PUT/PATCH. Create returns the bare row with 201, while get-one returns `{"data": row}` and list returns `{"data": [...], "total", "pages", "current_page"}`. HexaSync is the client, so changing any of this breaks the remote side.
+- **Fields cannot be cleared via the API.** Both create and update copy a field only when `!empty(...)`, so sending `""` leaves the old value.
+- **Adding a log field touches five places:** the `CREATE TABLE` in `DatabaseSetup`, a column migration (see next point), the DTO (property, getter/setter, `toArray`, `fromArray`), the repository's `$data` **and** the positional `$format` array in `save()` (order must match), and the copy-if-present blocks in both `create_log` and `update_log`. Add a column to `AdminSyncLogPage` and bump the "No logs found" `colspan` if it should be visible.
+- **Schema migrations are hand-rolled.** `DatabaseSetup` runs `CREATE TABLE IF NOT EXISTS` then a `SHOW COLUMNS` / `ALTER TABLE` check per later-added column (currently `item_id`), duplicated in `hexasync_activate_plugin()` and `hexasync_update_plugin()`. The latter is hooked to `wp_after_update_plugin`, which is not a WordPress core action, so in practice migrations only run on activation.
+- **Filtering and pagination happen in PHP.** The admin log page and `GET /log` load rows via the repository and then `array_filter`/`array_slice`. The `limit`/`offset` args on `getAll()` exist but nobody passes them. `GET /log` uses `profile_name` if given and otherwise `task_name`; it never combines them (`getByProfileAndTaskName()` exists but is unused). `getCount()` is also unused and its query is not passed through `prepare()`.
+- **`%i` identifier placeholders** in `$wpdb->prepare()` are why the minimum WordPress version is 6.2.
+- **Timestamps.** `execute_at` / `executed_at` are free-form strings from HexaSync stored in VARCHAR columns; only `created_at` / `updated_at` are real MySQL timestamps.
+- **Notification flow.** Activation fires the custom action `hexasync_plugin_activated`, which is what schedules the `hexasync_check_new_logs` cron on a custom `twelve_hours` interval (deactivation clears it). `check_and_notify()` reads logs created since the `hexasync_last_notification_check` option, and sends one email only if some log carries an `item_id` not already in the `hexasync_notified_item_ids` option; logs without `item_id` never trigger mail. Settings live in the `hexasync_notification_settings` option (`enabled`, `emails[]`). It also sets a one-hour transient that drives the admin notice.
+- **Log rows link out** to `https://app.hexasync.com/monitoring/profiles/{profile_id}/jobs?type=sync-history&id={log_detail_id}`, so both ids must be stored for the "View on HexaSync" link to appear.
+
+## Translations
+
+Every admin-facing string goes through `__()` / `esc_html_e()` / `_n()` etc. with the text domain `hexasyncintegration`; REST API responses stay English on purpose, since HexaSync reads them. Strings containing markup are translated whole (`'Open <a href="%s">…</a>.'`) and printed through `wp_kses()` with an allow-list, and every `sprintf` placeholder has a `/* translators: */` comment on the line above.
+
+`languages/` ships a `.pot` template plus Vietnamese (`hexasyncintegration-vi.po` / `.mo`). `hexasyncintegration.php` declares `Domain Path: /languages` and calls `load_plugin_textdomain()` on `init`; that call is needed for the bundled files to load, and WordPress.org language packs in `wp-content/languages/plugins/` still win when present.
+
+There is no wp-cli or gettext on this machine, so `tools/i18n/build.php` does the job with WordPress's own POMO classes: it extracts strings from the PHP source (plus the `Plugin Name` and `Description` headers), rewrites the `.pot`, merges existing translations from `hexasyncintegration-vi.po`, and compiles the `.mo`. To change a Vietnamese translation, edit `msgstr` in the `.po` and re-run it. It reports `UNTRANSLATED (vi)` for new strings and `DROPPED` for strings no longer in the source. Only literal string arguments are extracted, so never pass a variable as the first argument of `__()`.
+
+To see a page in Vietnamese without changing site settings, set the locale before WordPress boots in a one-off PHP process (pre-populate `$wp_filter` with `locale` and `determine_locale` filters returning `vi`, then `require wp-load.php` inside the `defaultwp_local-fpm-1` container, where the site is mounted at `/app`). Since WP 6.7 translations load just-in-time for the current locale, so forcing `plugin_locale` after boot does not work.
+
+## Releasing
+
+The version is written in three places that must agree: the `Version:` plugin header and `BEEHEXA_VERSION` in `hexasyncintegration.php`, and `Stable tag:` in `readme.txt` (which WordPress.org uses to pick the release). `readme.txt` is the WordPress.org listing, including its `## Changelog` section. The text domain is `hexasyncintegration`.
+
+Work happens on a version-named branch (e.g. `1.2.1`) alongside `master`.
+
+### Publishing to WordPress.org
+
+This git repo is the development source only. Publishing goes through a separate SVN checkout in the sibling folder `../hexasyncintegration-svn/` (`https://plugins.svn.wordpress.org/hexasyncintegration`):
+
+- `trunk/` holds the plugin files, mirroring this repo (`hexasyncintegration.php`, `index.php`, `readme.txt`, `LICENSE.txt`, `COPYING.txt`, `src/`, `languages/`). Do not copy `.git`, `CLAUDE.md` or `tools/` there.
+- `tags/<version>/` holds one copy per released version; `Stable tag:` in `readme.txt` must name a folder that exists here.
+- `assets/` holds the WordPress.org listing images (icon, screenshots), which are not part of the plugin and do not live in this repo.
+
+That folder also sits inside `wp-content/plugins/`, so WordPress lists `hexasyncintegration-svn/trunk` as a second copy of the plugin; never activate both. An `svn commit` there publishes to the public plugin directory, so only run it when explicitly asked.

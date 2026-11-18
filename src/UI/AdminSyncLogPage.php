@@ -90,7 +90,7 @@ class AdminSyncLogPage
 
         ?>
         <div class="wrap">
-            <h1>HexaSync Logs</h1>
+            <h1><?php esc_html_e('HexaSync Logs', 'hexasyncintegration'); ?></h1>
 
             <!-- Filters -->
             <div style="background: #f1f1f1; padding: 15px; margin: 20px 0; border-radius: 3px;">
@@ -99,37 +99,48 @@ class AdminSyncLogPage
 
                     <div style="flex: 1; min-width: 200px;">
                         <label for="filter_profile" style="display: block; margin-bottom: 5px; font-weight: bold;">
-                            Filter by Profile Name:
+                            <?php esc_html_e('Filter by Profile Name:', 'hexasyncintegration'); ?>
                         </label>
-                        <input type="text" name="filter_profile" id="filter_profile" value="<?php echo esc_attr($filter_profile); ?>" placeholder="Enter profile name..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;" />
+                        <input type="text" name="filter_profile" id="filter_profile" value="<?php echo esc_attr($filter_profile); ?>" placeholder="<?php esc_attr_e('Enter profile name...', 'hexasyncintegration'); ?>" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;" />
                     </div>
 
                     <div style="flex: 1; min-width: 200px;">
                         <label for="filter_task" style="display: block; margin-bottom: 5px; font-weight: bold;">
-                            Filter by Task Name:
+                            <?php esc_html_e('Filter by Task Name:', 'hexasyncintegration'); ?>
                         </label>
-                        <input type="text" name="filter_task" id="filter_task" value="<?php echo esc_attr($filter_task); ?>" placeholder="Enter task name..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;" />
+                        <input type="text" name="filter_task" id="filter_task" value="<?php echo esc_attr($filter_task); ?>" placeholder="<?php esc_attr_e('Enter task name...', 'hexasyncintegration'); ?>" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;" />
                     </div>
 
                     <div style="flex: 1; min-width: 200px;">
                         <label for="filter_reference" style="display: block; margin-bottom: 5px; font-weight: bold;">
-                            Filter by Reference Info:
+                            <?php esc_html_e('Filter by Reference Info:', 'hexasyncintegration'); ?>
                         </label>
-                        <input type="text" name="filter_reference" id="filter_reference" value="<?php echo esc_attr($filter_reference); ?>" placeholder="Enter reference info..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;" />
+                        <input type="text" name="filter_reference" id="filter_reference" value="<?php echo esc_attr($filter_reference); ?>" placeholder="<?php esc_attr_e('Enter reference info...', 'hexasyncintegration'); ?>" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px;" />
                     </div>
 
-                    <button type="submit" class="button button-primary" style="margin-top: 23px;">Filter</button>
+                    <button type="submit" class="button button-primary" style="margin-top: 23px;"><?php esc_html_e('Filter', 'hexasyncintegration'); ?></button>
                     <?php if ($filter_profile || $filter_task || $filter_reference): ?>
-                        <a href="<?php echo esc_url(admin_url('admin.php?page=hexasync-logs')); ?>" class="button">Clear Filters</a>
+                        <a href="<?php echo esc_url(admin_url('admin.php?page=hexasync-logs')); ?>" class="button"><?php esc_html_e('Clear Filters', 'hexasyncintegration'); ?></a>
                     <?php endif; ?>
                 </form>
             </div>
 
             <!-- Results info -->
             <p style="margin: 10px 0; color: #666;">
-                Showing <strong><?php echo esc_html($offset + 1); ?></strong> to <strong><?php echo esc_html(min($offset + $per_page, $total_logs)); ?></strong> of <strong><?php echo esc_html($total_logs); ?></strong> logs
+                <?php
+                echo wp_kses(
+                    sprintf(
+                        /* translators: 1: first row number, 2: last row number, 3: total number of logs */
+                        __('Showing <strong>%1$s</strong> to <strong>%2$s</strong> of <strong>%3$s</strong> logs', 'hexasyncintegration'),
+                        number_format_i18n($total_logs ? $offset + 1 : 0),
+                        number_format_i18n(min($offset + $per_page, $total_logs)),
+                        number_format_i18n($total_logs)
+                    ),
+                    ['strong' => []]
+                );
+                ?>
                 <?php if ($filter_profile || $filter_task || $filter_reference): ?>
-                    <em>(Filtered)</em>
+                    <em><?php esc_html_e('(Filtered)', 'hexasyncintegration'); ?></em>
                 <?php endif; ?>
             </p>
 
@@ -172,19 +183,19 @@ class AdminSyncLogPage
             <table class="wp-list-table widefat fixed striped hexasync-logs-table">
                 <thead>
                 <tr>
-                    <th width="6%">Log ID</th>
-                    <th width="8%">Profile Name</th>
-                    <th width="8%">Task Name</th>
-                    <th width="6%">Action Type</th>
-                    <th width="8%">Reference Info</th>
-                    <th width="8%">Message</th>
-                    <th width="8%">Error</th>
-                    <th width="8%">Push Note</th>
-                    <th width="6%">Status</th>
-                    <th width="7%">Execute At</th>
-                    <th width="7%">Executed At</th>
-                    <th width="5%">Retries</th>
-                    <th width="7%">Created At</th>
+                    <th width="6%"><?php esc_html_e('Log ID', 'hexasyncintegration'); ?></th>
+                    <th width="8%"><?php esc_html_e('Profile Name', 'hexasyncintegration'); ?></th>
+                    <th width="8%"><?php esc_html_e('Task Name', 'hexasyncintegration'); ?></th>
+                    <th width="6%"><?php esc_html_e('Action Type', 'hexasyncintegration'); ?></th>
+                    <th width="8%"><?php esc_html_e('Reference Info', 'hexasyncintegration'); ?></th>
+                    <th width="8%"><?php esc_html_e('Message', 'hexasyncintegration'); ?></th>
+                    <th width="8%"><?php esc_html_e('Error', 'hexasyncintegration'); ?></th>
+                    <th width="8%"><?php esc_html_e('Push Note', 'hexasyncintegration'); ?></th>
+                    <th width="6%"><?php esc_html_e('Status', 'hexasyncintegration'); ?></th>
+                    <th width="7%"><?php esc_html_e('Execute At', 'hexasyncintegration'); ?></th>
+                    <th width="7%"><?php esc_html_e('Executed At', 'hexasyncintegration'); ?></th>
+                    <th width="5%"><?php esc_html_e('Retries', 'hexasyncintegration'); ?></th>
+                    <th width="7%"><?php esc_html_e('Created At', 'hexasyncintegration'); ?></th>
                     <th width="8%">HexaSync</th>
                 </tr>
                 </thead>
@@ -236,7 +247,7 @@ class AdminSyncLogPage
                             <td>
                                 <?php if (!empty($log->getLogDetailId()) && !empty($log->getProfileId())): ?>
                                     <a href="<?php echo esc_url($hexasync_url); ?>" target="_blank" class="hexasync-link">
-                                        View on HexaSync
+                                        <?php esc_html_e('View on HexaSync', 'hexasyncintegration'); ?>
                                     </a>
                                 <?php else: ?>
                                     <span>-</span>
@@ -246,7 +257,7 @@ class AdminSyncLogPage
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="14" style="text-align: center;">No logs found</td>
+                        <td colspan="14" style="text-align: center;"><?php esc_html_e('No logs found', 'hexasyncintegration'); ?></td>
                     </tr>
                 <?php endif; ?>
                 </tbody>
@@ -259,7 +270,7 @@ class AdminSyncLogPage
                     // Previous button
                     if ($current_page > 1) {
                         $prev_page = $current_page - 1;
-                        echo '<a href="' . esc_url(admin_url('admin.php?page=hexasync-logs&paged=' . $prev_page . $filter_query_string)) . '" class="button">← Previous</a>';
+                        echo '<a href="' . esc_url(admin_url('admin.php?page=hexasync-logs&paged=' . $prev_page . $filter_query_string)) . '" class="button">' . esc_html__('← Previous', 'hexasyncintegration') . '</a>';
                     }
 
                     // Page numbers
@@ -291,7 +302,7 @@ class AdminSyncLogPage
                     // Next button
                     if ($current_page < $total_pages) {
                         $next_page = $current_page + 1;
-                        echo '<a href="' . esc_url(admin_url('admin.php?page=hexasync-logs&paged=' . $next_page . $filter_query_string)) . '" class="button">Next →</a>';
+                        echo '<a href="' . esc_url(admin_url('admin.php?page=hexasync-logs&paged=' . $next_page . $filter_query_string)) . '" class="button">' . esc_html__('Next →', 'hexasyncintegration') . '</a>';
                     }
                     ?>
                 </div>

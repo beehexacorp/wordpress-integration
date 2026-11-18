@@ -23,8 +23,8 @@ class AdminMenu
 
         add_submenu_page(
             'hexasync',
-            'HexaSync Logs',
-            'Logs',
+            __('HexaSync Logs', 'hexasyncintegration'),
+            __('Logs', 'hexasyncintegration'),
             'manage_options',
             'hexasync-logs',
             [AdminSyncLogPage::class, 'hexasync_logs_page']

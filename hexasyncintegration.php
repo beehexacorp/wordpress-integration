@@ -14,6 +14,7 @@ Author: Beehexa Team
 Author URI: https://www.beehexa.com/about/
 License: GPLv2 or later
 Text Domain: hexasyncintegration
+Domain Path: /languages
 */
 
 define( 'BEEHEXA_VERSION', '1.2.1' );
@@ -45,6 +46,15 @@ register_deactivation_hook(__FILE__, function() {
  * Plugin update hook - Update table schema on plugin update
  */
 add_action('wp_after_update_plugin', [Beehexa\Setup\DatabaseSetup::class,'hexasync_update_plugin']);
+
+/**
+ * Load bundled translations from /languages (e.g. Vietnamese).
+ * Language packs from translate.wordpress.org in wp-content/languages/plugins take precedence.
+ */
+add_action('init', function() {
+    // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- bundled translations need their path registered.
+    load_plugin_textdomain('hexasyncintegration', false, dirname(plugin_basename(__FILE__)) . '/languages');
+});
 
 /**
  * Register admin menu for HexaSync Logs

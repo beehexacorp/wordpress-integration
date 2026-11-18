@@ -76,14 +76,14 @@ class HexaSyncNotifications {
 
         add_settings_section(
             'hexasync_notifications_section',
-            'HexaSync Notification Settings',
+            __('HexaSync Notification Settings', 'hexasyncintegration'),
             [$this, 'settings_section_callback'],
             'hexasync_notifications'
         );
 
         add_settings_field(
             'enable_notifications',
-            'Enable Email Notifications',
+            __('Enable Email Notifications', 'hexasyncintegration'),
             [$this, 'enable_field_callback'],
             'hexasync_notifications',
             'hexasync_notifications_section'
@@ -91,7 +91,7 @@ class HexaSyncNotifications {
 
         add_settings_field(
             'notification_emails',
-            'Notification Emails',
+            __('Notification Emails', 'hexasyncintegration'),
             [$this, 'emails_field_callback'],
             'hexasync_notifications',
             'hexasync_notifications_section'
@@ -118,7 +118,7 @@ class HexaSyncNotifications {
      * Settings section callback
      */
     public function settings_section_callback() {
-        echo '<p>Configure email notifications for new HexaSync logs.</p>';
+        echo '<p>' . esc_html__('Configure email notifications for new HexaSync logs.', 'hexasyncintegration') . '</p>';
     }
 
     /**
@@ -137,7 +137,7 @@ class HexaSyncNotifications {
         $options = get_option(self::OPTION_NAME, ['enabled' => 0, 'emails' => []]);
         $emails = isset($options['emails']) ? implode(", ", $options['emails']) : '';
         echo '<textarea name="' . esc_attr(self::OPTION_NAME . '[emails]') . '" rows="2" cols="50">' . esc_textarea($emails) . '</textarea>';
-        echo '<p class="description">Enter emails separated by commas.</p>';
+        echo '<p class="description">' . esc_html__('Enter emails separated by commas.', 'hexasyncintegration') . '</p>';
     }
 
     /**
@@ -146,8 +146,8 @@ class HexaSyncNotifications {
     public function add_settings_submenu() {
         add_submenu_page(
             'hexasync',
-            'HexaSync Notifications',
-            'Notifications',
+            __('HexaSync Notifications', 'hexasyncintegration'),
+            __('Notifications', 'hexasyncintegration'),
             'manage_options',
             'hexasync-notifications',
             [$this, 'settings_page']
@@ -160,7 +160,7 @@ class HexaSyncNotifications {
     public function settings_page() {
         ?>
         <div class="wrap">
-            <h1>HexaSync Notification Settings</h1>
+            <h1><?php esc_html_e('HexaSync Notification Settings', 'hexasyncintegration'); ?></h1>
             <form method="post" action="options.php">
                 <?php
                 settings_fields('hexasync_notifications');
@@ -232,19 +232,22 @@ class HexaSyncNotifications {
         $domain = wp_parse_url($site_url, PHP_URL_HOST);
 
         $from_email = 'noreply@' . $domain;
-        $from_name = $site_name . ' Admin';
+        /* translators: %s: site name */
+        $from_name = sprintf(__('%s Admin', 'hexasyncintegration'), $site_name);
 
-        $subject = 'New HexaSync Logs - ' . $site_name;
+        /* translators: %s: site name */
+        $subject = sprintf(__('New HexaSync Logs - %s', 'hexasyncintegration'), $site_name);
 
         $headers = [
             'From: ' . $from_name . ' <' . $from_email . '>',
             'Content-Type: text/html; charset=UTF-8'
         ];
 
-        $message = "<p>New Sync logs have been added to the HexaSync Log monitor.</p>";
-        $message .= "<p>Total new logs: " . count($logs) . "</p>";
-        $message .= "<p><a href='" . esc_url(admin_url('admin.php?page=hexasync-logs')) . "'>View logs</a></p>";
-        $message .= "<p>Site: <a href='" . esc_url($site_url) . "'>" . esc_html($site_url) . "</a></p>";
+        $message = '<p>' . esc_html__('New Sync logs have been added to the HexaSync Log monitor.', 'hexasyncintegration') . '</p>';
+        /* translators: %s: number of new logs */
+        $message .= '<p>' . esc_html(sprintf(__('Total new logs: %s', 'hexasyncintegration'), number_format_i18n(count($logs)))) . '</p>';
+        $message .= "<p><a href='" . esc_url(admin_url('admin.php?page=hexasync-logs')) . "'>" . esc_html__('View logs', 'hexasyncintegration') . '</a></p>';
+        $message .= '<p>' . esc_html__('Site:', 'hexasyncintegration') . " <a href='" . esc_url($site_url) . "'>" . esc_html($site_url) . '</a></p>';
 
         wp_mail($emails, $subject, $message, $headers);
     }
