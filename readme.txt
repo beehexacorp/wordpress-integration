@@ -1,6 +1,6 @@
-=== HexaSync SaaS Integration Platform by Beehexa ===
+=== HexaSync – ERP, Accounting & POS Integration for WooCommerce ===
 Contributors: beehexa
-Tags: woocommerce, integration, erp, sync, automation
+Tags: woocommerce, erp, quickbooks, inventory sync, order sync
 Requires at least: 6.2
 Tested up to: 6.9
 Requires PHP: 7.4
@@ -8,54 +8,68 @@ Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Connect WooCommerce to ERP, accounting, POS and CRM with HexaSync, and monitor every sync log right inside WordPress.
+Sync WooCommerce products, inventory and orders with QuickBooks, Xero, NetSuite, Business Central and more. Monitor every sync log in wp-admin.
 
 == Description ==
 
-**HexaSync** is a SaaS integration platform by [Beehexa](https://www.beehexa.com/about/) that connects WooCommerce to ERP, accounting, POS, CRM and marketplace software, so products, inventory, orders, customers and shipments stay in sync without manual work.
+**HexaSync** is an integration platform by [Beehexa](https://www.beehexa.com/about/) that connects WooCommerce to ERP, accounting, POS, CRM and marketplace software. Products, inventory, orders, customers and shipments stay in sync automatically, without manual data entry or custom code.
 
 This plugin is the WordPress side of that connection. It gives store owners a place inside wp-admin to set up the WooCommerce connection and to see exactly what HexaSync synchronized, what failed, and why.
 
 = What the plugin adds to your WordPress site =
 
 * **Connection guide** – a step-by-step page that walks you through creating WooCommerce REST API keys and connecting your store to a HexaSync profile.
-* **Sync log monitor** – every sync transaction HexaSync reports is listed under **HexaSync → Logs** with profile, task, status, message, error detail and retry count.
-* **Filters** – narrow the log list by profile name, task name or reference info (for example an order number or SKU).
+* **Sync log monitor** – every sync transaction is listed under **HexaSync → Logs** with profile, task, status, message, error detail and retry count.
+* **Filters** – narrow the log list by profile name, task name or reference info, such as an order number or SKU.
 * **Email notifications** – get an email when new sync logs arrive, sent to the recipients you choose.
 * **One-click drill down** – each log links to the matching job in your HexaSync workspace for the full sync history.
 * **REST endpoint for HexaSync** – a secured endpoint that lets your HexaSync profiles write logs to your site.
 
-= What you can integrate with WooCommerce =
+= WooCommerce QuickBooks and Xero integration =
 
-HexaSync ships prebuilt [WooCommerce integration profiles](https://www.beehexa.com/hexasync/profile/woocommerce/) for the systems stores use most, including:
+Keep your books in step with your store. HexaSync sends WooCommerce orders, customers and products to [QuickBooks](https://www.beehexa.com/hexasync/profile/woocommerce/quickbooks/) or [Xero](https://www.beehexa.com/hexasync/profile/woocommerce/xero/) so your accounting team stops re-keying sales by hand.
 
-* Accounting – [WooCommerce and QuickBooks](https://www.beehexa.com/hexasync/profile/woocommerce/quickbooks/), [WooCommerce and Xero](https://www.beehexa.com/hexasync/profile/woocommerce/xero/)
-* ERP – [Microsoft Dynamics 365 Business Central](https://www.beehexa.com/hexasync/profile/microsoft-dynamics-365-business-central/woocommerce/), [NetSuite](https://www.beehexa.com/hexasync/profile/netsuite/woocommerce/), [SAP Business One](https://www.beehexa.com/hexasync/profile/sap-business-one/woocommerce/), [Odoo](https://www.beehexa.com/hexasync/profile/odoo/woocommerce/)
-* POS – [WooCommerce and Square](https://www.beehexa.com/hexasync/profile/woocommerce/square/)
-* CRM – [WooCommerce and HubSpot](https://www.beehexa.com/hexasync/profile/woocommerce/hubspot/), [WooCommerce and Salesforce](https://www.beehexa.com/hexasync/profile/woocommerce/salesforce/)
+= WooCommerce ERP integration: Business Central, NetSuite, SAP Business One, Odoo =
 
-See the full list of [HexaSync connectors](https://www.beehexa.com/hexasync/connectors/).
+Use your ERP as the single source of truth for products, prices and stock, and push WooCommerce orders back for fulfillment. Prebuilt profiles are available for [Microsoft Dynamics 365 Business Central](https://www.beehexa.com/hexasync/profile/microsoft-dynamics-365-business-central/woocommerce/), [NetSuite](https://www.beehexa.com/hexasync/profile/netsuite/woocommerce/), [SAP Business One](https://www.beehexa.com/hexasync/profile/sap-business-one/woocommerce/) and [Odoo](https://www.beehexa.com/hexasync/profile/odoo/woocommerce/).
+
+= WooCommerce Square POS integration =
+
+Sell in store and online from one catalog. The [WooCommerce and Square](https://www.beehexa.com/hexasync/profile/woocommerce/square/) profile keeps inventory accurate across both channels, so you don't oversell.
+
+= WooCommerce HubSpot and Salesforce integration =
+
+Send WooCommerce customers and orders to [HubSpot](https://www.beehexa.com/hexasync/profile/woocommerce/hubspot/) or [Salesforce](https://www.beehexa.com/hexasync/profile/woocommerce/salesforce/) so sales and marketing see every purchase.
+
+See all [WooCommerce integration profiles](https://www.beehexa.com/hexasync/profile/woocommerce/) and the full list of [HexaSync connectors](https://www.beehexa.com/hexasync/connectors/).
 
 = How HexaSync works =
 
-* **Middleware** – HexaSync sits between your systems and transfers data between them, so neither side needs custom code.
+* **Middleware** – HexaSync sits between your systems and moves data between them, so neither side needs custom code.
 * **Cell-based mapping** – map any data point from one system to another.
 * **Customizable tasks** – adapt each sync task to your business rules.
-* **Monitoring** – know exactly when a sync transaction is SUCCESSFUL or FAILED, and why.
+* **Monitoring** – know exactly when a sync transaction succeeded or failed, and why.
 
 = Benefits for WooCommerce stores =
 
-* Normalize data management processes
-* Improve data quality and consistency
-* Reduce 90% of catalog data management time
-* Automate order fulfillment
-* Automate accounting processes
-* Improve customer satisfaction
-* Keep inventory accurate across every channel
+* Keep inventory accurate across every sales channel
+* Automate order fulfillment and accounting entries
+* Cut the time spent on manual catalog and order data entry
+* Improve data quality and consistency between systems
+* Catch and fix sync errors before customers notice them
 
 = Getting started =
 
 A HexaSync account is required. Sign in at [app.hexasync.com](https://app.hexasync.com/), see [pricing](https://www.beehexa.com/help/pricing/), read the [documentation](https://www.beehexa.com/docs/), or [contact the Beehexa team](https://www.beehexa.com/contact-us/) for help with your integration.
+
+= External services =
+
+This plugin works with the HexaSync platform, a service provided by Beehexa.
+
+* Your HexaSync profiles send sync log records (profile name, task name, status, messages, errors and reference info such as order numbers) to your site through the plugin's REST endpoint. This happens only after you connect a HexaSync profile to your store.
+* The "View on HexaSync" links on the Logs page open the matching job at `https://app.hexasync.com` in your browser. The plugin itself does not send your site data to HexaSync.
+
+Service terms: [Beehexa Terms of Service](https://www.beehexa.com/legal/beehexa-term-of-service/). Privacy: [Beehexa Privacy Policy](https://www.beehexa.com/legal/privacy-policy/).
 
 == Installation ==
 
@@ -73,34 +87,29 @@ Once a profile is running, its sync history appears under **HexaSync → Logs**.
 
 Yes. The plugin shows and stores the sync logs that your HexaSync profiles send to your site. The synchronization itself runs on the HexaSync platform.
 
+= Which systems can I connect to WooCommerce? =
+
+ERP, accounting, POS, CRM and marketplace software, including QuickBooks, Xero, Microsoft Dynamics 365 Business Central, NetSuite, SAP Business One, Odoo, Square, HubSpot and Salesforce. See the [WooCommerce integration profiles](https://www.beehexa.com/hexasync/profile/woocommerce/) for the current list.
+
+= Can HexaSync sync WooCommerce inventory in real time? =
+
+HexaSync runs sync tasks on the schedule you set in your profile, so stock levels stay aligned between WooCommerce and your ERP or POS. For near real-time updates, add WooCommerce webhooks that point to your HexaSync flow, as described in step 4 of the connection guide. Check the [documentation](https://www.beehexa.com/docs/) for the options available to each connector.
+
 = Does it require WooCommerce? =
 
-The connection guide is written for WooCommerce stores, and WooCommerce is needed to sync products, orders and customers. The log monitor and notifications work on any WordPress site that HexaSync sends logs to.
+WooCommerce is needed to sync products, orders and customers, and the connection guide is written for WooCommerce stores. The log monitor and notifications work on any WordPress site that HexaSync sends logs to.
 
 = Where are the logs stored? =
 
-In your own WordPress database, in a dedicated table. Nothing is stored in posts or options, so the log history does not slow down your content.
+Sync logs are stored in a dedicated table in your own WordPress database, not in posts, so the log history does not slow down your content. Notification settings are saved as regular WordPress options.
 
 = How does HexaSync authenticate to my site? =
 
-HexaSync writes logs through a REST endpoint that accepts HTTP Basic Authentication for a WordPress user with administrator capability. Use HTTPS, and create a dedicated user for the integration.
-
-= Which systems can I connect to WooCommerce? =
-
-ERP, accounting, POS, CRM and marketplace software. See the [WooCommerce integration profiles](https://www.beehexa.com/hexasync/profile/woocommerce/) for the current list.
+HexaSync writes logs through a REST endpoint that uses HTTP Basic Authentication for a WordPress user with administrator capability. We recommend creating a dedicated user for the integration and using a WordPress Application Password (Users → Profile → Application Passwords) instead of the account password, so access can be revoked at any time. Always use HTTPS.
 
 = Where can I get help? =
 
 Use the support forum for this plugin, or [contact Beehexa](https://www.beehexa.com/contact-us/).
-
-== External services ==
-
-This plugin works with the HexaSync platform, a service provided by Beehexa.
-
-* Your HexaSync profiles send sync log records (profile name, task name, status, messages, errors and reference info such as order numbers) to your site through the plugin's REST endpoint. This happens only after you connect a HexaSync profile to your store.
-* The "View on HexaSync" links on the Logs page open the matching job at `https://app.hexasync.com` in your browser. The plugin itself does not send your site data to HexaSync.
-
-Service terms: [Beehexa Terms of Service](https://www.beehexa.com/legal/beehexa-term-of-service/). Privacy: [Beehexa Privacy Policy](https://www.beehexa.com/legal/privacy-policy/).
 
 == Screenshots ==
 
