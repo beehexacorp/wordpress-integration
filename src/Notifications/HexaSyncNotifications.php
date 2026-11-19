@@ -22,6 +22,16 @@ class HexaSyncNotifications {
     const CRON_HOOK = 'hexasync_check_new_logs';
 
     /**
+     * Daily cron hook that deletes logs older than the retention setting
+     */
+    const PURGE_HOOK = 'hexasync_purge_old_logs';
+
+    /**
+     * How many notified item ids to remember (oldest are dropped first)
+     */
+    const MAX_NOTIFIED_IDS = 5000;
+
+    /**
      * @var HexaSyncLogRepository
      */
     private $repository;
@@ -56,6 +66,7 @@ class HexaSyncNotifications {
 
         // Add cron action
         add_action(self::CRON_HOOK, [$instance, 'check_and_notify']);
+        add_action(self::PURGE_HOOK, [$instance, 'purge_old_logs']);
 
         // Add submenu
         add_action('admin_menu', [$instance, 'add_settings_submenu']);
@@ -76,7 +87,7 @@ class HexaSyncNotifications {
 
         add_settings_section(
             'hexasync_notifications_section',
-            __('HexaSync Notification Settings', 'hexasyncintegration'),
+            __('Email Notifications', 'hexasyncintegration'),
             [$this, 'settings_section_callback'],
             'hexasync_notifications'
         );
@@ -96,6 +107,21 @@ class HexaSyncNotifications {
             'hexasync_notifications',
             'hexasync_notifications_section'
         );
+
+        add_settings_section(
+            'hexasync_retention_section',
+            __('Log Retention', 'hexasyncintegration'),
+            [$this, 'retention_section_callback'],
+            'hexasync_notifications'
+        );
+
+        add_settings_field(
+            'retention_days',
+            __('Delete logs older than', 'hexasyncintegration'),
+            [$this, 'retention_field_callback'],
+            'hexasync_notifications',
+            'hexasync_retention_section'
+        );
     }
 
     /**
@@ -104,13 +130,16 @@ class HexaSyncNotifications {
     public function sanitize_settings($input) {
         $output = [];
 
-        $output['enabled'] = isset($input['enabled']) ? 1 : 0;
+        // $input is the form submission (emails as a comma-separated string) or, when the
+        // option is saved from code with update_option(), the stored array itself.
+        $output['enabled'] = !empty($input['enabled']) ? 1 : 0;
         $output['emails'] = [];
         if(!empty($input['emails'])) {
-            $emails = explode(",", $input['emails']);
+            $emails = is_array($input['emails']) ? $input['emails'] : explode(",", (string) $input['emails']);
             $emails = array_map('sanitize_email', array_map('trim', $emails));
             $output['emails'] = array_values(array_filter($emails));
         }
+        $output['retention_days'] = isset($input['retention_days']) ? max(0, (int) $input['retention_days']) : 0;
         return $output;
     }
 
@@ -141,13 +170,30 @@ class HexaSyncNotifications {
     }
 
     /**
+     * Retention section callback
+     */
+    public function retention_section_callback() {
+        echo '<p>' . esc_html__('Old logs are deleted once a day. Set 0 to keep every log.', 'hexasyncintegration') . '</p>';
+    }
+
+    /**
+     * Retention field callback
+     */
+    public function retention_field_callback() {
+        $options = get_option(self::OPTION_NAME, []);
+        $days = isset($options['retention_days']) ? (int) $options['retention_days'] : 0;
+        echo '<input type="number" min="0" step="1" class="small-text" name="' . esc_attr(self::OPTION_NAME . '[retention_days]') . '" value="' . esc_attr($days) . '" /> ';
+        esc_html_e('days', 'hexasyncintegration');
+    }
+
+    /**
      * Add settings submenu
      */
     public function add_settings_submenu() {
         add_submenu_page(
             'hexasync',
-            __('HexaSync Notifications', 'hexasyncintegration'),
-            __('Notifications', 'hexasyncintegration'),
+            __('HexaSync Settings', 'hexasyncintegration'),
+            __('Settings', 'hexasyncintegration'),
             'manage_options',
             'hexasync-notifications',
             [$this, 'settings_page']
@@ -160,7 +206,7 @@ class HexaSyncNotifications {
     public function settings_page() {
         ?>
         <div class="wrap">
-            <h1><?php esc_html_e('HexaSync Notification Settings', 'hexasyncintegration'); ?></h1>
+            <h1><?php esc_html_e('HexaSync Settings', 'hexasyncintegration'); ?></h1>
             <form method="post" action="options.php">
                 <?php
                 settings_fields('hexasync_notifications');
@@ -179,6 +225,20 @@ class HexaSyncNotifications {
         if (!wp_next_scheduled(self::CRON_HOOK)) {
             wp_schedule_event(time(), 'twelve_hours', self::CRON_HOOK);
         }
+        if (!wp_next_scheduled(self::PURGE_HOOK)) {
+            wp_schedule_event(time() + HOUR_IN_SECONDS, 'daily', self::PURGE_HOOK);
+        }
+    }
+
+    /**
+     * Delete logs older than the retention setting (0 keeps everything)
+     */
+    public function purge_old_logs() {
+        $options = get_option(self::OPTION_NAME, []);
+        $days = isset($options['retention_days']) ? (int) $options['retention_days'] : 0;
+        if ($days > 0) {
+            $this->repository->deleteOlderThan($days);
+        }
     }
 
     /**
@@ -186,7 +246,7 @@ class HexaSyncNotifications {
      */
     public function check_and_notify() {
         $options = get_option(self::OPTION_NAME, ['enabled' => 0, 'emails' => []]);
-        if (!$options['enabled'] || empty($options['emails'])) {
+        if (empty($options['enabled']) || empty($options['emails'])) {
             return;
         }
 
@@ -209,7 +269,8 @@ class HexaSyncNotifications {
             $this->send_notification_email($new_logs);
 
             // Update notified item_ids
-            $notified_item_ids = array_unique(array_merge($notified_item_ids, $new_item_ids));
+            $notified_item_ids = array_values(array_unique(array_merge($notified_item_ids, $new_item_ids)));
+            $notified_item_ids = array_slice($notified_item_ids, -self::MAX_NOTIFIED_IDS);
             update_option('hexasync_notified_item_ids', $notified_item_ids);
 
             // Add admin notice

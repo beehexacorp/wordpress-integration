@@ -4,7 +4,7 @@ Tags: woocommerce, erp, quickbooks, inventory sync, order sync
 Requires at least: 6.2
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,6 +22,7 @@ This plugin is the WordPress side of that connection. It gives store owners a pl
 * **Sync log monitor** – every sync transaction is listed under **HexaSync → Logs** with profile, task, status, message, error detail and retry count.
 * **Filters** – narrow the log list by profile name, task name or reference info, such as an order number or SKU.
 * **Email notifications** – get an email when new sync logs arrive, sent to the recipients you choose.
+* **Log retention** – optionally delete logs older than a set number of days, so the log table stays small.
 * **One-click drill down** – each log links to the matching job in your HexaSync workspace for the full sync history.
 * **REST endpoint for HexaSync** – a secured endpoint that lets your HexaSync profiles write logs to your site.
 
@@ -77,7 +78,7 @@ Service terms: [Beehexa Terms of Service](https://www.beehexa.com/legal/beehexa-
 2. Open **HexaSync** in the WordPress admin menu and follow the connection guide.
 3. In **WooCommerce → Settings → Advanced → REST API**, create an API key with Read/Write permission.
 4. In your HexaSync workspace, create a profile, choose WooCommerce, and enter your store URL, consumer key and consumer secret.
-5. Optional: open **HexaSync → Notifications** to turn on email alerts for new sync logs.
+5. Optional: open **HexaSync → Settings** to turn on email alerts for new sync logs and choose how long logs are kept.
 
 Once a profile is running, its sync history appears under **HexaSync → Logs**.
 
@@ -101,7 +102,7 @@ WooCommerce is needed to sync products, orders and customers, and the connection
 
 = Where are the logs stored? =
 
-Sync logs are stored in a dedicated table in your own WordPress database, not in posts, so the log history does not slow down your content. Notification settings are saved as regular WordPress options.
+Sync logs are stored in a dedicated table in your own WordPress database, not in posts, so the log history does not slow down your content. Logs are kept until you delete them, or for the number of days set under **HexaSync → Settings → Log Retention**. Deleting the plugin from the Plugins screen removes the table and the plugin's settings.
 
 = How does HexaSync authenticate to my site? =
 
@@ -119,6 +120,14 @@ Use the support forum for this plugin, or [contact Beehexa](https://www.beehexa.
 4. Connection guide: step-by-step setup to connect WooCommerce to HexaSync.
 
 == Changelog ==
+
+= 1.2.3 =
+* Add log retention: delete logs older than a set number of days, once a day (off by default).
+* Database changes and scheduled tasks are now applied after an automatic plugin update, not only on activation.
+* The plugin's Basic Authentication handler now applies only to its own `beehexa/v1` REST routes.
+* The Notifications page is now **HexaSync → Settings**.
+* Deleting the plugin removes its log table, settings and scheduled tasks.
+* Fix a fatal error when the notification settings were saved from code rather than the settings form.
 
 = 1.2.2 =
 * Add Vietnamese translation; all admin pages, notices and notification emails are now translatable.

@@ -1,11 +1,11 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: HexaSync SaaS Integration Platform by Beehexa 1.2.1\n"
+"Project-Id-Version: HexaSync SaaS Integration Platform by Beehexa 1.2.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/hexasyncintegration\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-18 11:16+0000\n"
+"POT-Creation-Date: 2026-11-19 07:36+0000\n"
 "X-Domain: hexasyncintegration\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,71 +17,87 @@ msgstr ""
 
 #. Plugin Name of the plugin
 #: hexasyncintegration.php
-msgid "HexaSync SaaS Integration Platform by Beehexa"
+msgid "HexaSync – ERP, Accounting & POS Integration for WooCommerce"
 msgstr ""
 
-#: src/Notifications/HexaSyncNotifications.php:46
+#: src/Notifications/HexaSyncNotifications.php:56
 msgid "Every 12 Hours"
 msgstr ""
 
-#: src/Notifications/HexaSyncNotifications.php:79
-#: src/Notifications/HexaSyncNotifications.php:163
-msgid "HexaSync Notification Settings"
+#: src/Notifications/HexaSyncNotifications.php:90
+msgid "Email Notifications"
 msgstr ""
 
-#: src/Notifications/HexaSyncNotifications.php:86
+#: src/Notifications/HexaSyncNotifications.php:97
 msgid "Enable Email Notifications"
 msgstr ""
 
-#: src/Notifications/HexaSyncNotifications.php:94
+#: src/Notifications/HexaSyncNotifications.php:105
 msgid "Notification Emails"
 msgstr ""
 
-#: src/Notifications/HexaSyncNotifications.php:121
-msgid "Configure email notifications for new HexaSync logs."
+#: src/Notifications/HexaSyncNotifications.php:113
+msgid "Log Retention"
 msgstr ""
 
-#: src/Notifications/HexaSyncNotifications.php:140
-msgid "Enter emails separated by commas."
-msgstr ""
-
-#: src/Notifications/HexaSyncNotifications.php:149
-msgid "HexaSync Notifications"
+#: src/Notifications/HexaSyncNotifications.php:120
+msgid "Delete logs older than"
 msgstr ""
 
 #: src/Notifications/HexaSyncNotifications.php:150
-msgid "Notifications"
+msgid "Configure email notifications for new HexaSync logs."
+msgstr ""
+
+#: src/Notifications/HexaSyncNotifications.php:169
+msgid "Enter emails separated by commas."
+msgstr ""
+
+#: src/Notifications/HexaSyncNotifications.php:176
+msgid "Old logs are deleted once a day. Set 0 to keep every log."
+msgstr ""
+
+#: src/Notifications/HexaSyncNotifications.php:186
+msgid "days"
+msgstr ""
+
+#: src/Notifications/HexaSyncNotifications.php:195
+#: src/Notifications/HexaSyncNotifications.php:209
+msgid "HexaSync Settings"
+msgstr ""
+
+#: src/Notifications/HexaSyncNotifications.php:196
+msgid "Settings"
 msgstr ""
 
 #. translators: %s: site name
-#: src/Notifications/HexaSyncNotifications.php:236
+#: src/Notifications/HexaSyncNotifications.php:297
 msgid "%s Admin"
 msgstr ""
 
 #. translators: %s: site name
-#: src/Notifications/HexaSyncNotifications.php:239
+#: src/Notifications/HexaSyncNotifications.php:300
 msgid "New HexaSync Logs - %s"
 msgstr ""
 
-#: src/Notifications/HexaSyncNotifications.php:246
+#: src/Notifications/HexaSyncNotifications.php:307
 msgid "New Sync logs have been added to the HexaSync Log monitor."
 msgstr ""
 
 #. translators: %s: number of new logs
-#: src/Notifications/HexaSyncNotifications.php:248
+#: src/Notifications/HexaSyncNotifications.php:309
 msgid "Total new logs: %s"
 msgstr ""
 
-#: src/Notifications/HexaSyncNotifications.php:249
+#: src/Notifications/HexaSyncNotifications.php:310
 msgid "View logs"
 msgstr ""
 
-#: src/Notifications/HexaSyncNotifications.php:250
+#: src/Notifications/HexaSyncNotifications.php:311
 msgid "Site:"
 msgstr ""
 
 #. translators: %s: number of new HexaSync logs
-#: src/Notifications/HexaSyncNotifications.php:262
+#: src/Notifications/HexaSyncNotifications.php:323
 msgid "You have %s new HexaSync log."
 msgid_plural "You have %s new HexaSync logs."
 msgstr[0] ""

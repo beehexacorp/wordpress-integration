@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: HexaSync SaaS Integration Platform by Beehexa 1.2.1\n"
+"Project-Id-Version: HexaSync SaaS Integration Platform by Beehexa 1.2.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/hexasyncintegration\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-18 11:16+0000\n"
+"POT-Creation-Date: 2026-11-19 07:36+0000\n"
 "X-Domain: hexasyncintegration\n"
-"PO-Revision-Date: 2026-11-18 11:16+0000\n"
+"PO-Revision-Date: 2026-11-19 07:36+0000\n"
 "Language-Team: Vietnamese\n"
 "Language: vi\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -19,71 +19,87 @@ msgstr "Từ nhiều năm kinh nghiệm làm việc với các nhà bán lẻ, n
 
 #. Plugin Name of the plugin
 #: hexasyncintegration.php
-msgid "HexaSync SaaS Integration Platform by Beehexa"
-msgstr "HexaSync SaaS Integration Platform by Beehexa"
+msgid "HexaSync – ERP, Accounting & POS Integration for WooCommerce"
+msgstr "HexaSync – Tích hợp ERP, kế toán & POS cho WooCommerce"
 
-#: src/Notifications/HexaSyncNotifications.php:46
+#: src/Notifications/HexaSyncNotifications.php:56
 msgid "Every 12 Hours"
 msgstr "Mỗi 12 giờ"
 
-#: src/Notifications/HexaSyncNotifications.php:79
-#: src/Notifications/HexaSyncNotifications.php:163
-msgid "HexaSync Notification Settings"
-msgstr "Cài đặt thông báo HexaSync"
+#: src/Notifications/HexaSyncNotifications.php:90
+msgid "Email Notifications"
+msgstr "Thông báo qua email"
 
-#: src/Notifications/HexaSyncNotifications.php:86
+#: src/Notifications/HexaSyncNotifications.php:97
 msgid "Enable Email Notifications"
 msgstr "Bật thông báo qua email"
 
-#: src/Notifications/HexaSyncNotifications.php:94
+#: src/Notifications/HexaSyncNotifications.php:105
 msgid "Notification Emails"
 msgstr "Email nhận thông báo"
 
-#: src/Notifications/HexaSyncNotifications.php:121
+#: src/Notifications/HexaSyncNotifications.php:113
+msgid "Log Retention"
+msgstr "Lưu trữ log"
+
+#: src/Notifications/HexaSyncNotifications.php:120
+msgid "Delete logs older than"
+msgstr "Xoá log cũ hơn"
+
+#: src/Notifications/HexaSyncNotifications.php:150
 msgid "Configure email notifications for new HexaSync logs."
 msgstr "Cấu hình thông báo qua email khi có nhật ký HexaSync mới."
 
-#: src/Notifications/HexaSyncNotifications.php:140
+#: src/Notifications/HexaSyncNotifications.php:169
 msgid "Enter emails separated by commas."
 msgstr "Nhập các địa chỉ email, cách nhau bằng dấu phẩy."
 
-#: src/Notifications/HexaSyncNotifications.php:149
-msgid "HexaSync Notifications"
-msgstr "Thông báo HexaSync"
+#: src/Notifications/HexaSyncNotifications.php:176
+msgid "Old logs are deleted once a day. Set 0 to keep every log."
+msgstr "Log cũ được xoá mỗi ngày một lần. Đặt 0 để giữ toàn bộ log."
 
-#: src/Notifications/HexaSyncNotifications.php:150
-msgid "Notifications"
-msgstr "Thông báo"
+#: src/Notifications/HexaSyncNotifications.php:186
+msgid "days"
+msgstr "ngày"
+
+#: src/Notifications/HexaSyncNotifications.php:195
+#: src/Notifications/HexaSyncNotifications.php:209
+msgid "HexaSync Settings"
+msgstr "Cài đặt HexaSync"
+
+#: src/Notifications/HexaSyncNotifications.php:196
+msgid "Settings"
+msgstr "Cài đặt"
 
 #. translators: %s: site name
-#: src/Notifications/HexaSyncNotifications.php:236
+#: src/Notifications/HexaSyncNotifications.php:297
 msgid "%s Admin"
 msgstr "Quản trị %s"
 
 #. translators: %s: site name
-#: src/Notifications/HexaSyncNotifications.php:239
+#: src/Notifications/HexaSyncNotifications.php:300
 msgid "New HexaSync Logs - %s"
 msgstr "Nhật ký HexaSync mới - %s"
 
-#: src/Notifications/HexaSyncNotifications.php:246
+#: src/Notifications/HexaSyncNotifications.php:307
 msgid "New Sync logs have been added to the HexaSync Log monitor."
 msgstr "Có nhật ký đồng bộ mới được thêm vào trang theo dõi nhật ký HexaSync."
 
 #. translators: %s: number of new logs
-#: src/Notifications/HexaSyncNotifications.php:248
+#: src/Notifications/HexaSyncNotifications.php:309
 msgid "Total new logs: %s"
 msgstr "Tổng số nhật ký mới: %s"
 
-#: src/Notifications/HexaSyncNotifications.php:249
+#: src/Notifications/HexaSyncNotifications.php:310
 msgid "View logs"
 msgstr "Xem nhật ký"
 
-#: src/Notifications/HexaSyncNotifications.php:250
+#: src/Notifications/HexaSyncNotifications.php:311
 msgid "Site:"
 msgstr "Trang web:"
 
 #. translators: %s: number of new HexaSync logs
-#: src/Notifications/HexaSyncNotifications.php:262
+#: src/Notifications/HexaSyncNotifications.php:323
 msgid "You have %s new HexaSync log."
 msgid_plural "You have %s new HexaSync logs."
 msgstr[0] "Bạn có %s nhật ký HexaSync mới."

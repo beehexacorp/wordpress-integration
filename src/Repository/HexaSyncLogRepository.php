@@ -233,7 +233,34 @@ class HexaSyncLogRepository {
     public function getCount() {
         global $wpdb;
         // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnsupportedIdentifierPlaceholder,WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        return (int)$wpdb->get_var("SELECT COUNT(*) FROM %i", $this->table_name);
+        return (int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM %i", $this->table_name));
+    }
+
+    /**
+     * Delete logs created more than $days days ago, in batches so a large
+     * backlog does not lock the table for long.
+     *
+     * @param int $days
+     * @return int Number of rows deleted
+     */
+    public function deleteOlderThan($days) {
+        global $wpdb;
+        $days = (int) $days;
+        if ($days < 1) {
+            return 0;
+        }
+
+        $deleted = 0;
+        do {
+            // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnsupportedIdentifierPlaceholder, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+            $rows = $wpdb->query($wpdb->prepare(
+                "DELETE FROM %i WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY) LIMIT 1000",
+                $this->table_name, $days
+            ));
+            $deleted += (int) $rows;
+        } while ($rows === 1000);
+
+        return $deleted;
     }
 
     /**

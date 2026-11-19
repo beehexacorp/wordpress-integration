@@ -11,7 +11,7 @@ A WordPress plugin (`hexasyncintegration`, published on WordPress.org by Beehexa
 There is no build step, no Composer/npm, no test suite and no linter config. The plugin is plain PHP loaded straight from this directory by the surrounding WordPress install (`defaultwp.local`).
 
 - Syntax check a file: `php -l src/API/HexaSyncLogAPI.php`
-- Re-run table creation and cron scheduling: deactivate and reactivate the plugin (activation is the only place both happen).
+- Re-run table creation and cron scheduling: delete the `hexasync_db_version` option (or deactivate and reactivate); the next request re-runs `DatabaseSetup::install()`.
 - Exercise the API (Basic Auth with a WordPress administrator's username and password):
   ```bash
   curl -u USER:PASS https://<site>/wp-json/beehexa/v1/hexasync/health
@@ -30,25 +30,27 @@ The `// phpcs:ignore WordPress.DB...` comments exist to pass WordPress.org's Plu
 
 Data path, end to end:
 
-1. **Auth** (`src/API/JsonBasicAuth.php`) hooks `determine_current_user` so HTTP Basic credentials are checked with `wp_authenticate()` (real account password, not application passwords). It applies to every REST request on the site, not just this plugin's routes.
+1. **Auth** (`src/API/JsonBasicAuth.php`) hooks `determine_current_user` so HTTP Basic credentials are checked with `wp_authenticate()` (real account password). Since 1.2.3 it only acts on `beehexa/v1` routes (`is_plugin_route()` reads `REQUEST_URI` / `?rest_route=`, because the REST route is not parsed yet at that point); the `hexasync_basic_auth_all_routes` filter restores the old site-wide behaviour.
 2. **REST** (`src/API/HexaSyncLogAPI.php`) registers namespace `beehexa/v1/hexasync`: `GET /health`, `GET|POST /log`, `GET|POST|DELETE /log/{id}`. All routes require `manage_options`.
 3. **DTO** (`src/DTO/HexaSyncLogDTO.php`) is the single shape for a log row; `fromArray()`/`toArray()` use the column names directly.
 4. **Repository** (`src/Repository/HexaSyncLogRepository.php`) is the only code that touches the table `{$wpdb->prefix}hexasync_log`. `save()` inserts or updates depending on whether the DTO has an id.
 5. **Admin UI** (`src/UI/`) and **Notifications** (`src/Notifications/HexaSyncNotifications.php`) read through the repository.
 
-Admin menu: top-level `hexasync` (connection guide) and the `hexasync-logs` submenu are registered in `AdminMenu`; the `hexasync-notifications` submenu is registered separately inside `HexaSyncNotifications::add_settings_submenu()`.
+Admin menu: top-level `hexasync` (connection guide) and the `hexasync-logs` submenu are registered in `AdminMenu`; the Settings submenu (slug kept as `hexasync-notifications` for old links) is registered separately inside `HexaSyncNotifications::add_settings_submenu()` and holds both the email and log-retention sections.
 
 ### Things that are not obvious from one file
 
 - **API contract quirks.** Request bodies are wrapped: `{"log": {...}}`. Update is `POST /log/{id}`, not PUT/PATCH. Create returns the bare row with 201, while get-one returns `{"data": row}` and list returns `{"data": [...], "total", "pages", "current_page"}`. HexaSync is the client, so changing any of this breaks the remote side.
 - **Fields cannot be cleared via the API.** Both create and update copy a field only when `!empty(...)`, so sending `""` leaves the old value.
 - **Adding a log field touches five places:** the `CREATE TABLE` in `DatabaseSetup`, a column migration (see next point), the DTO (property, getter/setter, `toArray`, `fromArray`), the repository's `$data` **and** the positional `$format` array in `save()` (order must match), and the copy-if-present blocks in both `create_log` and `update_log`. Add a column to `AdminSyncLogPage` and bump the "No logs found" `colspan` if it should be visible.
-- **Schema migrations are hand-rolled.** `DatabaseSetup` runs `CREATE TABLE IF NOT EXISTS` then a `SHOW COLUMNS` / `ALTER TABLE` check per later-added column (currently `item_id`), duplicated in `hexasync_activate_plugin()` and `hexasync_update_plugin()`. The latter is hooked to `wp_after_update_plugin`, which is not a WordPress core action, so in practice migrations only run on activation.
+- **Schema migrations are hand-rolled.** `DatabaseSetup::install()` runs `CREATE TABLE IF NOT EXISTS` (so `dbDelta` never alters an existing table) then a `SHOW COLUMNS` / `ALTER TABLE` check per later-added column (currently `item_id`). It runs on activation and from `maybe_upgrade()` on `plugins_loaded` whenever the `hexasync_db_version` option differs from `DatabaseSetup::DB_VERSION`, because in-place updates never fire the activation hook. **Bump `DB_VERSION` whenever `install()` changes**, including when a new cron event must be scheduled on existing sites.
 - **Filtering and pagination happen in PHP.** The admin log page and `GET /log` load rows via the repository and then `array_filter`/`array_slice`. The `limit`/`offset` args on `getAll()` exist but nobody passes them. `GET /log` uses `profile_name` if given and otherwise `task_name`; it never combines them (`getByProfileAndTaskName()` exists but is unused). `getCount()` is also unused and its query is not passed through `prepare()`.
 - **`%i` identifier placeholders** in `$wpdb->prepare()` are why the minimum WordPress version is 6.2.
 - **Timestamps.** `execute_at` / `executed_at` are free-form strings from HexaSync stored in VARCHAR columns; only `created_at` / `updated_at` are real MySQL timestamps.
-- **Notification flow.** Activation fires the custom action `hexasync_plugin_activated`, which is what schedules the `hexasync_check_new_logs` cron on a custom `twelve_hours` interval (deactivation clears it). `check_and_notify()` reads logs created since the `hexasync_last_notification_check` option, and sends one email only if some log carries an `item_id` not already in the `hexasync_notified_item_ids` option; logs without `item_id` never trigger mail. Settings live in the `hexasync_notification_settings` option (`enabled`, `emails[]`). It also sets a one-hour transient that drives the admin notice.
+- **Notification flow.** `install()` fires the custom action `hexasync_plugin_activated`, which is what schedules the `hexasync_check_new_logs` cron on a custom `twelve_hours` interval and the daily `hexasync_purge_old_logs` cron (deactivation clears both). `check_and_notify()` reads logs created since the `hexasync_last_notification_check` option, and sends one email only if some log carries an `item_id` not already in the `hexasync_notified_item_ids` option; logs without `item_id` never trigger mail. Settings live in the `hexasync_notification_settings` option (`enabled`, `emails[]`, `retention_days`; 0 = keep forever, which is the default). `sanitize_settings()` is registered through `register_setting`, so it also runs on `update_option()` from code and must accept the stored array shape as well as the form's comma-separated string. It also sets a one-hour transient that drives the admin notice.
 - **Log rows link out** to `https://app.hexasync.com/monitoring/profiles/{profile_id}/jobs?type=sync-history&id={log_detail_id}`, so both ids must be stored for the "View on HexaSync" link to appear.
+
+**Uninstall.** `uninstall.php` drops the log table and deletes every plugin option and cron event; add new options there too.
 
 ## Translations
 
