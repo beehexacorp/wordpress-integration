@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 Plugin Name: HexaSync – ERP, Accounting & POS Integration for WooCommerce
 Plugin URI: https://www.beehexa.com/
 Description: Through years of experience working with global retailers, manufacturers, and distributors, Beehexa has developed the HexaSync Automation Engine — a unified platform that connects and automates processes across eCommerce, Accounting, ERP, POS, CRM, GenAI, and other enterprise systems.
-Version: 1.2.3
+Version: 1.2.4
 Requires at least: 6.2
 Requires PHP: 7.4
 Author: Beehexa Team
@@ -17,7 +17,7 @@ Text Domain: hexasyncintegration
 Domain Path: /languages
 */
 
-define( 'BEEHEXA_VERSION', '1.2.3' );
+define( 'BEEHEXA_VERSION', '1.2.4' );
 define( 'BEEHEXA__MINIMUM_WP_VERSION', '6.2' );
 define( 'BEEHEXA__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 // Autoload classes

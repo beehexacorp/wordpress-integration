@@ -12,14 +12,10 @@ class JsonBasicAuth
 
     static function json_basic_auth_handler($user)
     {
-        global $current_user, $beehexa_json_basic_auth_error;
-        if(!empty($current_user)) {
-            return $current_user->ID;
-        }
+        global $beehexa_json_basic_auth_error;
 
-        $beehexa_json_basic_auth_error = null;
-
-        // Don't authenticate twice
+        // Someone else (core Application Passwords, WooCommerce API keys, a login
+        // cookie) already identified the user.
         if (!empty($user)) {
             return $user;
         }
@@ -31,16 +27,17 @@ class JsonBasicAuth
         }
 
         // Check that we're trying to authenticate
-        if (!isset($_SERVER['PHP_AUTH_USER'])) {
-            return $user;
-        }
-        // Check that we're trying to authenticate
-        if (!isset($_SERVER['PHP_AUTH_PW'])) {
+        if (!isset($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'])) {
             return $user;
         }
 
-        $username = sanitize_text_field(wp_unslash($_SERVER['PHP_AUTH_USER']));
-        $password = sanitize_text_field(wp_unslash($_SERVER['PHP_AUTH_PW']));
+        $beehexa_json_basic_auth_error = null;
+
+        $username = sanitize_user(wp_unslash($_SERVER['PHP_AUTH_USER']));
+        // Passwords are compared as typed, like WordPress core does; sanitizing would change them.
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $password = wp_unslash($_SERVER['PHP_AUTH_PW']);
+
         /**
          * In multi-site, wp_authenticate_spam_check filter is run on authentication. This filter calls
          * get_currentuserinfo which in turn calls the determine_current_user filter. This leads to infinite
@@ -49,18 +46,33 @@ class JsonBasicAuth
          */
         remove_filter('determine_current_user', [static::class, 'json_basic_auth_handler'], 20);
 
-        $user = wp_authenticate($username, $password);
+        // Application Passwords first. WordPress first asks for the current user in WP->init,
+        // before REST_REQUEST is defined, so core skips Application Passwords on that call;
+        // is_plugin_route() has already established that this is a REST API request.
+        add_filter('application_password_is_api_request', '__return_true');
+        $authenticated = wp_authenticate_application_password(null, $username, $password);
+        remove_filter('application_password_is_api_request', '__return_true');
+
+        // Then the account password.
+        if (!$authenticated instanceof \WP_User) {
+            $authenticated = wp_authenticate($username, $password);
+        }
 
         add_filter('determine_current_user', [static::class,'json_basic_auth_handler'], 20);
 
-        if (is_wp_error($user)) {
-            $beehexa_json_basic_auth_error = $user;
+        if (is_wp_error($authenticated)) {
+            // Plain-text message and a 401 status (a WP_Error without one is sent as a 500).
+            $beehexa_json_basic_auth_error = new \WP_Error(
+                $authenticated->get_error_code(),
+                wp_strip_all_tags($authenticated->get_error_message()),
+                ['status' => 401]
+            );
             return null;
         }
 
         $beehexa_json_basic_auth_error = true;
 
-        return $user->ID;
+        return $authenticated->ID;
     }
 
     /**
