@@ -66,7 +66,7 @@ To see a page in Vietnamese without changing site settings, set the locale befor
 
 The version is written in three places that must agree: the `Version:` plugin header and `BEEHEXA_VERSION` in `hexasyncintegration.php`, and `Stable tag:` in `readme.txt` (which WordPress.org uses to pick the release). `readme.txt` is the WordPress.org listing, including its `## Changelog` section. The text domain is `hexasyncintegration`.
 
-Work happens on a version-named branch (e.g. `1.2.1`) alongside `master`.
+**Never touch `master`**: no commits, merges, rebases or pushes to it. Every version gets its own branch named after the version (`1.2.3`, `1.2.4`, …), created from the previous version's branch, and that version's work is committed and pushed there only.
 
 ### Publishing to WordPress.org
 
