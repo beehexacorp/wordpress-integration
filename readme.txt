@@ -2,7 +2,7 @@
 Contributors: beehexa
 Tags: woocommerce, erp, quickbooks, inventory sync, order sync
 Requires at least: 6.2
-Tested up to: 6.9
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 1.2.3
 License: GPLv2 or later
