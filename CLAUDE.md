@@ -20,6 +20,7 @@ There is no build step, no Composer/npm, no test suite and no linter config. The
     https://<site>/wp-json/beehexa/v1/hexasync/log
   ```
 
+- Full request/response samples for every route live in `docs/rest-api.md`. They are kept out of `readme.txt` on purpose: the WordPress.org listing should not carry API instructions.
 - Regenerate translations after adding or changing any UI string: `php tools/i18n/build.php` (see Translations below).
 
 The `// phpcs:ignore WordPress.DB...` comments exist to pass WordPress.org's Plugin Check review. Keep them (and add the equivalent) when touching `$wpdb` queries, and keep every output escaped (`esc_html`, `esc_attr`, `esc_url`) and every input `wp_unslash` + sanitised, since the plugin is reviewed against those rules.
@@ -72,7 +73,7 @@ The version is written in three places that must agree: the `Version:` plugin he
 
 This git repo is the development source only. Publishing goes through a separate SVN checkout in the sibling folder `../hexasyncintegration-svn/` (`https://plugins.svn.wordpress.org/hexasyncintegration`):
 
-- `trunk/` holds the plugin files, mirroring this repo (`hexasyncintegration.php`, `index.php`, `readme.txt`, `LICENSE.txt`, `COPYING.txt`, `src/`, `languages/`). Do not copy `.git`, `CLAUDE.md` or `tools/` there.
+- `trunk/` holds the plugin files, mirroring this repo (`hexasyncintegration.php`, `index.php`, `readme.txt`, `LICENSE.txt`, `COPYING.txt`, `src/`, `languages/`). Do not copy `.git`, `CLAUDE.md`, `docs/` or `tools/` there.
 - `tags/<version>/` holds one copy per released version; `Stable tag:` in `readme.txt` must name a folder that exists here.
 - `assets/` holds the WordPress.org listing images (icon, screenshots), which are not part of the plugin and do not live in this repo.
 
