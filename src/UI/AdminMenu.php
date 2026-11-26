@@ -11,10 +11,12 @@ namespace Beehexa\UI;
 class AdminMenu
 {
     public static function hexasync_register_admin_menu(){
+        // Shop managers (manage_woocommerce) use the Connect panel on this page; the Logs and
+        // Settings submenus stay administrator-only.
         add_menu_page(
             'HexaSync',
             'HexaSync',
-            'manage_options',
+            class_exists('WooCommerce') ? 'manage_woocommerce' : 'manage_options',
             'hexasync',
             [AdminConnectionGuidePage::class, 'hexasync_connection_guide_page'],
             'dashicons-list-view',

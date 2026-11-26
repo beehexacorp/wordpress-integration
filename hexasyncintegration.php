@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 Plugin Name: HexaSync – ERP, Accounting & POS Integration for WooCommerce
 Plugin URI: https://www.beehexa.com/
 Description: Through years of experience working with global retailers, manufacturers, and distributors, Beehexa has developed the HexaSync Automation Engine — a unified platform that connects and automates processes across eCommerce, Accounting, ERP, POS, CRM, GenAI, and other enterprise systems.
-Version: 1.2.7
+Version: 1.3.0
 Requires at least: 6.2
 Requires PHP: 7.4
 Author: Beehexa Team
@@ -31,7 +31,7 @@ General Public License for more details: https://www.gnu.org/licenses/gpl-2.0.ht
 is in LICENSE.txt).
 */
 
-define( 'BEEHEXA_VERSION', '1.2.7' );
+define( 'BEEHEXA_VERSION', '1.3.0' );
 define( 'BEEHEXA__MINIMUM_WP_VERSION', '6.2' );
 define( 'BEEHEXA__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 // Autoload classes
@@ -41,9 +41,15 @@ require_once plugin_dir_path(__FILE__) . 'src/API/JsonBasicAuth.php';
 require_once plugin_dir_path(__FILE__) . 'src/DTO/HexaSyncLogDTO.php';
 require_once plugin_dir_path(__FILE__) . 'src/UI/AdminMenu.php';
 require_once plugin_dir_path(__FILE__) . 'src/UI/AdminConnectionGuidePage.php';
+require_once plugin_dir_path(__FILE__) . 'src/UI/ConnectPanel.php';
 require_once plugin_dir_path(__FILE__) . 'src/UI/AdminSyncLogPage.php';
 require_once plugin_dir_path(__FILE__) . 'src/Repository/HexaSyncLogRepository.php';
 require_once plugin_dir_path(__FILE__) . 'src/API/HexaSyncLogAPI.php';
+require_once plugin_dir_path(__FILE__) . 'src/API/Permissions.php';
+require_once plugin_dir_path(__FILE__) . 'src/Connection/ConnectionStore.php';
+require_once plugin_dir_path(__FILE__) . 'src/Connection/WooKeys.php';
+require_once plugin_dir_path(__FILE__) . 'src/Connection/Disconnect.php';
+require_once plugin_dir_path(__FILE__) . 'src/API/ConnectionAPI.php';
 require_once plugin_dir_path(__FILE__) . 'src/Setup/DatabaseSetup.php';
 require_once plugin_dir_path(__FILE__) . 'src/Notifications/HexaSyncNotifications.php';
 /**
@@ -97,6 +103,8 @@ add_filter( 'woocommerce_rest_is_request_to_rest_api', ['Beehexa\API\JsonBasicAu
  * Register REST API routes for HexaSync Logs
  */
 add_action('rest_api_init', [new Beehexa\API\HexaSyncLogAPI(),'register_routes']);
+add_action('rest_api_init', function () { (new Beehexa\API\ConnectionAPI())->register_routes(); });
+add_action('admin_post_hexasync_disconnect', [Beehexa\Connection\Disconnect::class, 'handle_request']);
 
 /**
  * Initialize notifications

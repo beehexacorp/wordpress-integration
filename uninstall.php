@@ -13,7 +13,7 @@ global $wpdb;
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
 $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'hexasync_log' ) );
 
-foreach ( array( 'hexasync_notification_settings', 'hexasync_last_notification_check', 'hexasync_notified_item_ids', 'hexasync_db_version' ) as $hexasync_option ) {
+foreach ( array( 'hexasync_notification_settings', 'hexasync_last_notification_check', 'hexasync_notified_item_ids', 'hexasync_db_version', 'hexasync_connection' ) as $hexasync_option ) {
 	delete_option( $hexasync_option );
 }
 delete_transient( 'hexasync_new_logs_notice' );

@@ -17,7 +17,7 @@ curl -u "USERNAME:APP_PASSWORD" https://example.com/wp-json/beehexa/v1/hexasync/
 ```
 
 ```json
-{"status":"ok","message":"HexaSync API is running"}
+{"status":"ok","message":"HexaSync API is running","version":"1.3.0"}
 ```
 
 Create a log (`profile_name` and `task_name` are required):
@@ -85,4 +85,30 @@ curl -u "USERNAME:APP_PASSWORD" -X DELETE https://example.com/wp-json/beehexa/v1
 {"message":"Log deleted successfully"}
 ```
 
-Errors: `400` when the `log` object or a required field is missing, `401` for missing or wrong credentials (`rest_forbidden`, `incorrect_password` or `invalid_username`), `403` when the user is not an administrator, and `404` with `{"error":"Log not found"}` for an unknown `log_id`.
+Errors: `400` when the `log` object or a required field is missing, `401` for missing or wrong credentials (`rest_forbidden`, `incorrect_password` or `invalid_username`), `403` when the user is neither an administrator nor a user who can manage WooCommerce (shop manager), and `404` with `{"error":"Log not found"}` for an unknown `log_id`.
+
+## Connection
+
+HexaSync calls this route after the store owner connects with one click, to tell the plugin which workspace it is connected to. It needs a WooCommerce REST API key (not an Application Password), and `key_id` must be the key that authenticates the request.
+
+```bash
+curl -u "ck_…:cs_…" \
+  -H "Content-Type: application/json" \
+  -d '{"workspace_id":"ws-1","workspace_name":"Acme","credential_id":"cred-1","credential_name":"My store",
+       "dashboard_url":"https://app.hexasync.com/ws-1","key_id":12,
+       "webhook_url":"https://app.hexasync.com/hooks/abc","signing_secret":"<at least 32 characters>"}' \
+  https://example.com/wp-json/beehexa/v1/hexasync/connection
+```
+
+`POST` returns `200 {"data": {...}}` with the stored connection and `connected_at`, without `signing_secret`. `GET` returns the same, and `DELETE` returns `200 {"deleted": true}` (it removes the stored connection only, never a key, and can be repeated).
+
+| Status | Code | When |
+|---|---|---|
+| 400 | `hexasync_invalid_connection` | A field is missing or invalid (the message names it). `dashboard_url` and `webhook_url` must be `https`; `signing_secret` needs 32+ characters |
+| 403 | `hexasync_key_required` | The request was not authenticated with a WooCommerce key |
+| 403 | `hexasync_key_mismatch` | `key_id` is not the key that authenticated the request |
+| 404 | `hexasync_not_connected` | `GET` with no stored connection |
+
+Re-authorizing (the same `credential_id` with a new `key_id`) saves the new connection, then deletes the earlier key if WooCommerce created it for a HexaSync approval (its description starts with `HexaSync - API`) and it belongs to the same user as the new key; any other key is left alone. A different `credential_id` deletes nothing.
+
+The key must be the one WooCommerce authenticated: a request whose user was identified by an Application Password or account password gets `hexasync_key_required` even if it also carries `consumer_key` or `oauth_consumer_key`, and the key must belong to the authenticated user.

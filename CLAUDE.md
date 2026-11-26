@@ -8,8 +8,9 @@ A WordPress plugin (`hexasyncintegration`, published on WordPress.org by Beehexa
 
 ## Commands
 
-There is no build step, no Composer/npm, no test suite and no linter config. The plugin is plain PHP loaded straight from this directory by the surrounding WordPress install (`defaultwp.local`).
+There is no build step, no Composer/npm and no linter config. The plugin is plain PHP loaded straight from this directory by the surrounding WordPress install (`defaultwp.local`). Tests are a Docker harness in `tools/test-env/` (bash + curl + WP-CLI, no PHPUnit): `up.sh` builds a throwaway WordPress + WooCommerce + Plugin Check site at `127.0.0.1:8973` plus a fake HexaSync, `run.sh` runs every `tests/t_*.sh` and exits non-zero on any failure, `down.sh` removes it. `PLUGIN_SRC=/path` points it at another copy of the plugin and `PHP_IMAGE` at another PHP. It needs Docker and host `curl`, `unzip` and `php` (containers have no network, so downloads happen on the host).
 
+- Run the tests: `tools/test-env/up.sh && tools/test-env/run.sh`.
 - Syntax check a file: `php -l src/API/HexaSyncLogAPI.php`
 - Re-run table creation and cron scheduling: delete the `hexasync_db_version` option (or deactivate and reactivate); the next request re-runs `DatabaseSetup::install()`.
 - Exercise the API (Basic Auth with a WordPress administrator's username and password):
@@ -32,12 +33,14 @@ The `// phpcs:ignore WordPress.DB...` comments exist to pass WordPress.org's Plu
 Data path, end to end:
 
 1. **Auth** (`src/API/JsonBasicAuth.php`) hooks `determine_current_user` so HTTP Basic credentials are checked first as an Application Password (`wp_authenticate_application_password()` with `application_password_is_api_request` forced on, because WordPress first resolves the user in `WP->init`, before `REST_REQUEST` exists, so core skips Application Passwords on that call) and then as the account password via `wp_authenticate()`. Failures are re-wrapped with status 401, since a `WP_Error` without a status is sent as 500. Passwords are passed through unsanitized on purpose. Since 1.2.3 it only acts on `beehexa/v1` routes (`is_plugin_route()` reads `REQUEST_URI` / `?rest_route=`, because the REST route is not parsed yet at that point); the `hexasync_basic_auth_all_routes` filter restores the old site-wide behaviour.
-2. **REST** (`src/API/HexaSyncLogAPI.php`) registers namespace `beehexa/v1/hexasync`: `GET /health`, `GET|POST /log`, `GET|POST|DELETE /log/{id}`. All routes require `manage_options`.
+   Since 1.2.7, `allow_woocommerce_keys()` (filter `woocommerce_rest_is_request_to_rest_api`) lets a WooCommerce consumer key authenticate `beehexa/v1`. A `ck_` user name skips the WordPress login path. Routes accept `manage_options` or `manage_woocommerce`.
+2. **REST** (`src/API/HexaSyncLogAPI.php`) registers namespace `beehexa/v1/hexasync`: `GET /health`, `GET|POST /log`, `GET|POST|DELETE /log/{id}`. All routes require `manage_options` or `manage_woocommerce`.
 3. **DTO** (`src/DTO/HexaSyncLogDTO.php`) is the single shape for a log row; `fromArray()`/`toArray()` use the column names directly.
 4. **Repository** (`src/Repository/HexaSyncLogRepository.php`) is the only code that touches the table `{$wpdb->prefix}hexasync_log`. `save()` inserts or updates depending on whether the DTO has an id.
-5. **Admin UI** (`src/UI/`) and **Notifications** (`src/Notifications/HexaSyncNotifications.php`) read through the repository.
+5. **Connection** (`src/Connection/`, `src/API/ConnectionAPI.php`, `src/API/Permissions.php`, `src/UI/ConnectPanel.php`, since 1.3.0). `ConnectionStore` keeps the connected workspace in the `hexasync_connection` option (not autoloaded; `public_view()` strips `signing_secret`). `ConnectionAPI` registers `GET|POST|DELETE beehexa/v1/hexasync/connection`, same permission as the log routes (`Permissions::can_use_api`); `POST` needs the request to be authenticated by a WooCommerce key whose id equals `key_id`. Error codes: `hexasync_invalid_connection` 400, `hexasync_key_required` 403, `hexasync_key_mismatch` 403, `hexasync_not_connected` 404; details in `docs/rest-api.md`. Re-authorizing the same `credential_id` with a new key saves the new connection, then deletes the old key only if its description starts with `HexaSync - API` (WC_Auth's name for a key approved for HexaSync) and it has the same `user_id` as the new key. `WooKeys::request_credentials()` re-implements `WC_REST_Authentication`'s precedence (SSL Basic / `consumer_key` query vs OAuth 1.0a header) so the plugin reads the same key WooCommerce would; it must stay in sync with WooCommerce. Because WooCommerce skips its check when a password or cookie already identified the user, `request_key_id()` also requires that neither this plugin's Basic auth nor an Application Password authenticated the request, that the key belongs to the current user, and on the SSL Basic path that the secret matches. `ConnectPanel` is the Connect UI on the main admin page; the HexaSync base URL is `apply_filters( 'hexasync_app_url', 'https://app.hexasync.com' )` (used for staging and the test harness). `Disconnect` (admin-post action `hexasync_disconnect`) sends a signed `app.uninstalled` POST to the stored `webhook_url` first and only then deletes the key and option; if HexaSync is unreachable nothing is deleted and the user picks "Try again" or "Disconnect anyway". `GET /health` also returns `version` (`BEEHEXA_VERSION`).
+6. **Admin UI** (`src/UI/`) and **Notifications** (`src/Notifications/HexaSyncNotifications.php`) read through the repository.
 
-Admin menu: top-level `hexasync` (connection guide) and the `hexasync-logs` submenu are registered in `AdminMenu`; the Settings submenu (slug kept as `hexasync-notifications` for old links) is registered separately inside `HexaSyncNotifications::add_settings_submenu()` and holds both the email and log-retention sections.
+Admin menu: top-level `hexasync` (connection guide and Connect panel; capability `manage_woocommerce` when WooCommerce is active, otherwise `manage_options`) and the `hexasync-logs` submenu (`manage_options`) are registered in `AdminMenu`; the Settings submenu (slug kept as `hexasync-notifications` for old links) is registered separately inside `HexaSyncNotifications::add_settings_submenu()` and holds both the email and log-retention sections.
 
 ### Things that are not obvious from one file
 
@@ -51,7 +54,7 @@ Admin menu: top-level `hexasync` (connection guide) and the `hexasync-logs` subm
 - **Notification flow.** `install()` fires the custom action `hexasync_plugin_activated`, which is what schedules the `hexasync_check_new_logs` cron on a custom `twelve_hours` interval and the daily `hexasync_purge_old_logs` cron (deactivation clears both). `check_and_notify()` reads logs created since the `hexasync_last_notification_check` option, and sends one email only if some log carries an `item_id` not already in the `hexasync_notified_item_ids` option; logs without `item_id` never trigger mail. Settings live in the `hexasync_notification_settings` option (`enabled`, `emails[]`, `retention_days`; 0 = keep forever, which is the default). `sanitize_settings()` is registered through `register_setting`, so it also runs on `update_option()` from code and must accept the stored array shape as well as the form's comma-separated string. It also sets a one-hour transient that drives the admin notice.
 - **Log rows link out** to `https://app.hexasync.com/monitoring/profiles/{profile_id}/jobs?type=sync-history&id={log_detail_id}`, so both ids must be stored for the "View on HexaSync" link to appear.
 
-**Uninstall.** `uninstall.php` drops the log table and deletes every plugin option and cron event; add new options there too.
+**Uninstall.** `uninstall.php` drops the log table and deletes every plugin option and cron event; add new options there too. `hexasync_connection` is included; deleting the plugin does not delete the WooCommerce key.
 
 ## Translations
 
@@ -75,7 +78,7 @@ The version is written in three places that must agree: the `Version:` plugin he
 
 This git repo is the development source only. Publishing goes through a separate SVN checkout in the sibling folder `../hexasyncintegration-svn/` (`https://plugins.svn.wordpress.org/hexasyncintegration`):
 
-- `trunk/` holds the plugin files, mirroring this repo (`hexasyncintegration.php`, `index.php`, `readme.txt`, `LICENSE.txt`, `uninstall.php`, `src/`, `languages/`). Do not copy `.git`, `CLAUDE.md`, `docs/` or `tools/` there.
+- `trunk/` holds the plugin files: it mirrors this repo minus everything `.distignore` lists (`.git`, `.gitignore`, `.distignore`, `.superpowers`, `CLAUDE.md`, `docs`, `tools`), which leaves `hexasyncintegration.php`, `index.php`, `readme.txt`, `LICENSE.txt`, `uninstall.php`, `src/` and `languages/`. Add any new development-only file or folder to `.distignore`.
 - `tags/<version>/` holds one copy per released version; `Stable tag:` in `readme.txt` must name a folder that exists here.
 - `assets/` holds the WordPress.org listing images (icon, screenshots), which are not part of the plugin and do not live in this repo.
 

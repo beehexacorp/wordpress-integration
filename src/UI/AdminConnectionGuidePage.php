@@ -27,6 +27,9 @@ class AdminConnectionGuidePage
         ?>
         <div class="wrap">
             <h1><?php esc_html_e('Connect WooCommerce to HexaSync', 'hexasyncintegration'); ?></h1>
+            <?php \Beehexa\UI\ConnectPanel::render(); ?>
+
+            <h2 style="margin-top: 24px;"><?php esc_html_e('Connect manually', 'hexasyncintegration'); ?></h2>
             <p style="max-width: 900px;">
                 <?php esc_html_e('Follow this setup guide to connect your WooCommerce store with HexaSync for product, order, and customer sync.', 'hexasyncintegration'); ?>
             </p>

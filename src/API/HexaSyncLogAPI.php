@@ -209,6 +209,7 @@ class HexaSyncLogAPI {
         return new \WP_REST_Response([
             'status' => 'ok',
             'message' => 'HexaSync API is running',
+            'version' => BEEHEXA_VERSION,
         ], 200);
     }
 
@@ -478,7 +479,7 @@ class HexaSyncLogAPI {
      * @return bool
      */
     public function check_permission() {
-        return current_user_can( 'manage_options' ) || current_user_can( 'manage_woocommerce' );
+        return Permissions::can_use_api();
     }
 }
 

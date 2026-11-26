@@ -1,11 +1,11 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: HexaSync SaaS Integration Platform by Beehexa 1.2.4\n"
+"Project-Id-Version: HexaSync SaaS Integration Platform by Beehexa 1.2.7\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/hexasyncintegration\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-20 08:00+0000\n"
+"POT-Creation-Date: 2026-11-26 13:43+0000\n"
 "X-Domain: hexasyncintegration\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,6 +18,14 @@ msgstr ""
 #. Plugin Name of the plugin
 #: hexasyncintegration.php
 msgid "HexaSync – ERP, Accounting & POS Integration for WooCommerce"
+msgstr ""
+
+#: src/Connection/Disconnect.php:53
+msgid "This store is not connected to HexaSync."
+msgstr ""
+
+#: src/Connection/Disconnect.php:76
+msgid "You do not have permission to do this."
 msgstr ""
 
 #: src/Notifications/HexaSyncNotifications.php:56
@@ -107,110 +115,114 @@ msgstr[1] ""
 msgid "Connect WooCommerce to HexaSync"
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:31
+#: src/UI/AdminConnectionGuidePage.php:32
+msgid "Connect manually"
+msgstr ""
+
+#: src/UI/AdminConnectionGuidePage.php:34
 msgid "Follow this setup guide to connect your WooCommerce store with HexaSync for product, order, and customer sync."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:35
+#: src/UI/AdminConnectionGuidePage.php:38
 msgid "Step 1: Prepare your store"
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:37
+#: src/UI/AdminConnectionGuidePage.php:40
 msgid "Make sure WooCommerce is installed and active."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:38
+#: src/UI/AdminConnectionGuidePage.php:41
 msgid "Confirm your store can access the internet and WordPress cron is running."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:39
+#: src/UI/AdminConnectionGuidePage.php:42
 msgid "Ensure your site uses HTTPS for secure API communication."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:44
+#: src/UI/AdminConnectionGuidePage.php:47
 msgid "Step 2: Create WooCommerce API keys"
 msgstr ""
 
 #. translators: %s: URL of the WooCommerce REST API keys screen
-#: src/UI/AdminConnectionGuidePage.php:48
+#: src/UI/AdminConnectionGuidePage.php:51
 msgid "Open <a href=\"%s\">WooCommerce REST API keys</a>."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:50
+#: src/UI/AdminConnectionGuidePage.php:53
 msgid "Click <strong>Add key</strong>."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:51
+#: src/UI/AdminConnectionGuidePage.php:54
 msgid "Set permissions to <strong>Read/Write</strong>."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:52
+#: src/UI/AdminConnectionGuidePage.php:55
 msgid "Copy the <strong>Consumer key</strong> and <strong>Consumer secret</strong>."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:54
+#: src/UI/AdminConnectionGuidePage.php:57
 msgid "Keep both keys secure. You will add them in HexaSync connection settings."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:58
+#: src/UI/AdminConnectionGuidePage.php:61
 msgid "Step 3: Connect in HexaSync"
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:60
+#: src/UI/AdminConnectionGuidePage.php:63
 msgid "Log in to your HexaSync workspace."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:61
+#: src/UI/AdminConnectionGuidePage.php:64
 msgid "Create a new profile and choose WooCommerce as source or destination."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:62
+#: src/UI/AdminConnectionGuidePage.php:65
 msgid "Enter your store URL, Consumer key, and Consumer secret."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:63
+#: src/UI/AdminConnectionGuidePage.php:66
 msgid "Run the connection test and save when it succeeds."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:68
+#: src/UI/AdminConnectionGuidePage.php:71
 msgid "Step 4: Optional webhook setup"
 msgstr ""
 
 #. translators: %s: URL of the WooCommerce webhooks screen
-#: src/UI/AdminConnectionGuidePage.php:72
+#: src/UI/AdminConnectionGuidePage.php:75
 msgid "Open <a href=\"%s\">WooCommerce Webhooks</a>."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:74
+#: src/UI/AdminConnectionGuidePage.php:77
 msgid "Create webhooks for events you want to sync in near real time (for example: order created/updated)."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:75
+#: src/UI/AdminConnectionGuidePage.php:78
 msgid "Use the webhook URL provided by your HexaSync flow."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:80
+#: src/UI/AdminConnectionGuidePage.php:83
 msgid "Troubleshooting checklist"
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:82
+#: src/UI/AdminConnectionGuidePage.php:85
 msgid "API key permissions are Read/Write."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:83
+#: src/UI/AdminConnectionGuidePage.php:86
 msgid "Store URL in HexaSync exactly matches your WordPress site URL."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:84
+#: src/UI/AdminConnectionGuidePage.php:87
 msgid "No firewall or security plugin blocks incoming/outgoing API requests."
 msgstr ""
 
-#: src/UI/AdminConnectionGuidePage.php:85
+#: src/UI/AdminConnectionGuidePage.php:88
 msgid "Server time and timezone are correct."
 msgstr ""
 
 #. translators: %s: URL of the HexaSync Logs admin page
-#: src/UI/AdminConnectionGuidePage.php:92
+#: src/UI/AdminConnectionGuidePage.php:95
 msgid "Need sync history and debug details? Go to <a href=\"%s\">HexaSync Logs</a>."
 msgstr ""
 
@@ -330,4 +342,73 @@ msgstr ""
 
 #: src/UI/AdminSyncLogPage.php:305
 msgid "Next →"
+msgstr ""
+
+#: src/UI/ConnectPanel.php:46
+msgid "Connecting with one click needs WooCommerce. Install and activate WooCommerce, or follow the manual steps below."
+msgstr ""
+
+#: src/UI/ConnectPanel.php:63
+msgid "Your store is connected to HexaSync."
+msgstr ""
+
+#: src/UI/ConnectPanel.php:72
+msgid "Disconnected from HexaSync."
+msgstr ""
+
+#: src/UI/ConnectPanel.php:88
+msgid "HexaSync connection"
+msgstr ""
+
+#: src/UI/ConnectPanel.php:90
+msgid "Connect to HexaSync"
+msgstr ""
+
+#: src/UI/ConnectPanel.php:92
+msgid "You will sign in to HexaSync, choose a workspace, then approve a Read/Write WooCommerce API key for HexaSync on this site."
+msgstr ""
+
+#: src/UI/ConnectPanel.php:102
+msgid "none yet"
+msgstr ""
+
+#. translators: 1: HexaSync workspace name, 2: API credential name
+#: src/UI/ConnectPanel.php:107
+msgid "Connected to %1$s (%2$s)"
+msgstr ""
+
+#. translators: %s: date the store was connected
+#: src/UI/ConnectPanel.php:113
+msgid "Connected on %s"
+msgstr ""
+
+#. translators: %s: date and time of the newest log, or "none yet"
+#: src/UI/ConnectPanel.php:118
+msgid "Last log received: %s"
+msgstr ""
+
+#: src/UI/ConnectPanel.php:123
+msgid "Open in HexaSync"
+msgstr ""
+
+#. translators: %s: the reason HexaSync could not be told, such as an HTTP
+#. status or a connection error
+#: src/UI/ConnectPanel.php:137
+msgid "HexaSync could not be told about the disconnect: %s"
+msgstr ""
+
+#: src/UI/ConnectPanel.php:143
+msgid "Try again"
+msgstr ""
+
+#: src/UI/ConnectPanel.php:144
+msgid "Disconnect anyway"
+msgstr ""
+
+#: src/UI/ConnectPanel.php:151
+msgid "Disconnect"
+msgstr ""
+
+#: src/UI/ConnectPanel.php:159
+msgid "Disconnect this store from HexaSync? HexaSync will be told first; then this site's HexaSync API key is deleted."
 msgstr ""

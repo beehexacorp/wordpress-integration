@@ -4,7 +4,7 @@ Tags: woocommerce, erp, quickbooks, inventory sync, order sync
 Requires at least: 6.2
 Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 1.2.7
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,6 +18,7 @@ This plugin is the WordPress side of that connection. It gives store owners a pl
 
 = What the plugin adds to your WordPress site =
 
+* **One-click connection** – on the main HexaSync page, click Connect, sign in to HexaSync and approve a WooCommerce key. HexaSync then sets up the connection for you.
 * **Connection guide** – a step-by-step page that walks you through creating WooCommerce REST API keys and connecting your store to a HexaSync profile.
 * **Sync log monitor** – every sync transaction is listed under **HexaSync → Logs** with profile, task, status, message, error detail and retry count.
 * **Filters** – narrow the log list by profile name, task name or reference info, such as an order number or SKU.
@@ -68,7 +69,9 @@ A HexaSync account is required. Sign in at [app.hexasync.com](https://app.hexasy
 This plugin works with the HexaSync platform, a service provided by Beehexa.
 
 * Your HexaSync profiles send sync log records (profile name, task name, status, messages, errors and reference info such as order numbers) to your site through the plugin's REST endpoint. This happens only after you connect a HexaSync profile to your store.
-* The "View on HexaSync" links on the Logs page open the matching job at `https://app.hexasync.com` in your browser. The plugin itself does not send your site data to HexaSync.
+* The plugin sends nothing to HexaSync before you click Connect to HexaSync. When you click it, your browser opens HexaSync with your store URL, the URL of the plugin's admin page, and the plugin and WooCommerce versions. The Read/Write key you approve is passed to HexaSync by WooCommerce. After that, HexaSync sends logs to your site.
+* When you click Disconnect, the plugin sends a notice to HexaSync with your store URL and the id of the key, unless you choose "Disconnect anyway", which sends nothing.
+* The "View on HexaSync" links on the Logs page open the matching job at `https://app.hexasync.com`. These links only open HexaSync in your browser.
 
 Service terms: [Beehexa Terms of Service](https://www.beehexa.com/legal/beehexa-term-of-service/). Privacy: [Beehexa Privacy Policy](https://www.beehexa.com/legal/privacy-policy/).
 
@@ -102,11 +105,17 @@ WooCommerce is needed to sync products, orders and customers, and the connection
 
 = Where are the logs stored? =
 
-Sync logs are stored in a dedicated table in your own WordPress database, not in posts, so the log history does not slow down your content. Logs are kept until you delete them, or for the number of days set under **HexaSync → Settings → Log Retention**. Deleting the plugin from the Plugins screen removes the table and the plugin's settings.
+Sync logs are stored in a dedicated table in your own WordPress database, not in posts, so the log history does not slow down your content. Logs are kept until you delete them, or for the number of days set under **HexaSync → Settings → Log Retention**. Deleting the plugin from the Plugins screen removes the table and the plugin's settings, including the saved connection. The WooCommerce API key is left in place, because it belongs to the sync: delete it under WooCommerce → Settings → Advanced → REST API, or click Disconnect before you delete the plugin.
+
+= What does Connect to HexaSync do? =
+
+On the main HexaSync page, click Connect and sign in to HexaSync. WooCommerce then asks you to approve a REST API key with Read/Write permission. Once you approve, HexaSync creates the webhooks it needs in your store and starts sending sync logs to the plugin. Your store shows which HexaSync workspace it is connected to.
+
+When you click Disconnect, the plugin first tells HexaSync, then deletes the key and the stored connection. If HexaSync cannot be reached, nothing is deleted and you can choose Try again or Disconnect anyway.
 
 = How does HexaSync authenticate to my site? =
 
-On a WooCommerce store, HexaSync writes logs with the WooCommerce REST API key (consumer key and secret) you already created for the WooCommerce connection: no WordPress password is needed. The key must have Read/Write permission and belong to an administrator or shop manager. WooCommerce checks the key as it does for its own API, and deleting the key under WooCommerce → Settings → Advanced → REST API stops HexaSync's access, including to the logs.
+On a WooCommerce store, HexaSync writes logs with the WooCommerce REST API key (consumer key and secret) from Connect to HexaSync, or one you created yourself for the WooCommerce connection: no WordPress password is needed. The key must have Read/Write permission and belong to an administrator or shop manager. WooCommerce checks the key as it does for its own API, and deleting the key under WooCommerce → Settings → Advanced → REST API stops HexaSync's access, including to the logs.
 
 On other sites, the log endpoint accepts HTTP Basic Authentication for a WordPress user with administrator capability. We recommend creating a dedicated user for the integration and using a WordPress Application Password (Users → Profile → Application Passwords) instead of the account password, so access can be revoked at any time. Always use HTTPS.
 
@@ -122,6 +131,12 @@ Use the support forum for this plugin, or [contact Beehexa](https://www.beehexa.
 4. Connection guide: step-by-step setup to connect WooCommerce to HexaSync.
 
 == Changelog ==
+
+= 1.3.0 =
+* New one-click Connect to HexaSync on the main HexaSync page: sign in, approve a WooCommerce Read/Write key, and HexaSync creates the webhooks and starts sending logs. The page shows which HexaSync workspace the store is connected to.
+* Disconnect now tells HexaSync first, then deletes the key and the stored connection. If HexaSync cannot be reached, everything is kept and you can choose "Try again" or "Disconnect anyway".
+* The `/health` response now includes the plugin `version`.
+* Deleting the plugin also removes the stored connection.
 
 = 1.2.7 =
 * HexaSync can now write logs with the store's WooCommerce REST API key, the one it already uses to sync, so no WordPress password or Application Password is needed. WooCommerce checks the key and its Read/Write permission. Users who can manage WooCommerce (shop managers) can now use the log endpoint, since a key belongs to the user who created it.

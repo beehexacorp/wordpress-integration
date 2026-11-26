@@ -65,6 +65,20 @@ class HexaSyncLogRepository {
     }
 
     /**
+     * Created-at time of the newest log, or null when there are no logs.
+     *
+     * @return string|null MySQL datetime
+     */
+    public function getLatestCreatedAt(): ?string {
+        global $wpdb;
+
+        // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnsupportedIdentifierPlaceholder, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $latest = $wpdb->get_var($wpdb->prepare("SELECT MAX(created_at) FROM %i", $this->table_name));
+
+        return empty($latest) ? null : (string) $latest;
+    }
+
+    /**
      * Get log by ID
      *
      * @param int $id
