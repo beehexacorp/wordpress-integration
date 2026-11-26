@@ -4,7 +4,7 @@ Tags: woocommerce, erp, quickbooks, inventory sync, order sync
 Requires at least: 6.2
 Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 1.2.5
+Stable tag: 1.2.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,6 +120,9 @@ Use the support forum for this plugin, or [contact Beehexa](https://www.beehexa.
 4. Connection guide: step-by-step setup to connect WooCommerce to HexaSync.
 
 == Changelog ==
+
+= 1.2.6 =
+* License files now match the plugin header: `LICENSE.txt` holds the GNU GPL v2 text, and the conflicting OSL 3.0 and MIT texts are removed. The plugin has always been declared GPLv2 or later. The Basic Auth handler now credits the WP REST API Basic Auth plugin it is based on. No functional changes.
 
 = 1.2.5 =
 * Tested with WordPress 7.2 and PHP 8.6.

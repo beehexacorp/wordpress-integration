@@ -65,6 +65,8 @@ To see a page in Vietnamese without changing site settings, set the locale befor
 
 ## Releasing
 
+The plugin is GPLv2 or later: the header says so, `LICENSE.txt` holds the GPL v2 text, and the copyright notice sits under the plugin header. Keep any bundled third-party code GPL-compatible.
+
 The version is written in three places that must agree: the `Version:` plugin header and `BEEHEXA_VERSION` in `hexasyncintegration.php`, and `Stable tag:` in `readme.txt` (which WordPress.org uses to pick the release). `readme.txt` is the WordPress.org listing, including its `## Changelog` section. The text domain is `hexasyncintegration`.
 
 **Never touch `master`**: no commits, merges, rebases or pushes to it. Every version gets its own branch named after the version (`1.2.3`, `1.2.4`, …), created from the previous version's branch, and that version's work is committed and pushed there only.
@@ -73,7 +75,7 @@ The version is written in three places that must agree: the `Version:` plugin he
 
 This git repo is the development source only. Publishing goes through a separate SVN checkout in the sibling folder `../hexasyncintegration-svn/` (`https://plugins.svn.wordpress.org/hexasyncintegration`):
 
-- `trunk/` holds the plugin files, mirroring this repo (`hexasyncintegration.php`, `index.php`, `readme.txt`, `LICENSE.txt`, `COPYING.txt`, `src/`, `languages/`). Do not copy `.git`, `CLAUDE.md`, `docs/` or `tools/` there.
+- `trunk/` holds the plugin files, mirroring this repo (`hexasyncintegration.php`, `index.php`, `readme.txt`, `LICENSE.txt`, `uninstall.php`, `src/`, `languages/`). Do not copy `.git`, `CLAUDE.md`, `docs/` or `tools/` there.
 - `tags/<version>/` holds one copy per released version; `Stable tag:` in `readme.txt` must name a folder that exists here.
 - `assets/` holds the WordPress.org listing images (icon, screenshots), which are not part of the plugin and do not live in this repo.
 

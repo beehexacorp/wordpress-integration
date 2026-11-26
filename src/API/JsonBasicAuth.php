@@ -1,6 +1,9 @@
 <?php
 /**
- * HexaSyncLogAPI - REST API for managing HexaSync Logs
+ * JsonBasicAuth - HTTP Basic Authentication for the plugin's beehexa/v1 REST routes
+ *
+ * Based on the WP REST API team's Basic Auth plugin (https://github.com/WP-API/Basic-Auth),
+ * GPLv2 or later, the same license as this plugin.
  *
  * @package Beehexa\API
  */
