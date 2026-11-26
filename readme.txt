@@ -2,9 +2,9 @@
 Contributors: beehexa
 Tags: woocommerce, erp, quickbooks, inventory sync, order sync
 Requires at least: 6.2
-Tested up to: 7.1
+Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 1.2.4
+Stable tag: 1.2.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,6 +120,11 @@ Use the support forum for this plugin, or [contact Beehexa](https://www.beehexa.
 4. Connection guide: step-by-step setup to connect WooCommerce to HexaSync.
 
 == Changelog ==
+
+= 1.2.5 =
+* Tested with WordPress 7.2 and PHP 8.6.
+* Fix a PHP 8.6 deprecation notice: the REST API class no longer declares a constant named `NAMESPACE`.
+* The database upgrade check now passes its column name as a query parameter, as Plugin Check requires.
 
 = 1.2.4 =
 * Fix: Application Passwords now work for the plugin's REST API. They were rejected as incorrect, which made the recommended setup fail.

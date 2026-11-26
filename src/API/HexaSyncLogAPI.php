@@ -18,9 +18,9 @@ class HexaSyncLogAPI {
     private $repository;
 
     /**
-     * API namespace
+     * REST namespace. Not named NAMESPACE: a class constant with that name is deprecated in PHP 8.6.
      */
-    const NAMESPACE = 'beehexa/v1/hexasync';
+    const REST_NAMESPACE = 'beehexa/v1/hexasync';
 
     /**
      * API endpoint base
@@ -40,7 +40,7 @@ class HexaSyncLogAPI {
     public function register_routes() {
         // Health check endpoint
         register_rest_route(
-            self::NAMESPACE,
+            self::REST_NAMESPACE,
             '/health',
             [
                 'methods' => 'GET',
@@ -50,7 +50,7 @@ class HexaSyncLogAPI {
         );
         // Get all logs
         register_rest_route(
-            self::NAMESPACE,
+            self::REST_NAMESPACE,
             self::ENDPOINT,
             [
                 'methods' => 'GET',
@@ -81,7 +81,7 @@ class HexaSyncLogAPI {
 
         // Get single log
         register_rest_route(
-            self::NAMESPACE,
+            self::REST_NAMESPACE,
             self::ENDPOINT . '/(?P<id>\d+)',
             [
                 'methods' => 'GET',
@@ -92,7 +92,7 @@ class HexaSyncLogAPI {
 
         // Create log
         register_rest_route(
-            self::NAMESPACE,
+            self::REST_NAMESPACE,
             self::ENDPOINT,
             [
                 'methods' => 'POST',
@@ -173,7 +173,7 @@ class HexaSyncLogAPI {
 
         // Update log
         register_rest_route(
-            self::NAMESPACE,
+            self::REST_NAMESPACE,
             self::ENDPOINT . '/(?P<id>\d+)',
             [
                 'methods' => 'POST',
@@ -190,7 +190,7 @@ class HexaSyncLogAPI {
 
         // Delete log
         register_rest_route(
-            self::NAMESPACE,
+            self::REST_NAMESPACE,
             self::ENDPOINT . '/(?P<id>\d+)',
             [
                 'methods' => 'DELETE',

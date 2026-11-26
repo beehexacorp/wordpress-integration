@@ -85,17 +85,11 @@ class DatabaseSetup
         // Columns added after the first release. CREATE TABLE IF NOT EXISTS leaves an
         // existing table alone, so each one needs its own check.
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $column_exists = $wpdb->get_results($wpdb->prepare(
-            "SHOW COLUMNS FROM %i LIKE 'item_id'",
-            $table_name
-        ));
+        $column_exists = $wpdb->get_results($wpdb->prepare('SHOW COLUMNS FROM %i LIKE %s', $table_name, 'item_id'));
 
         if (empty($column_exists)) {
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
-            $wpdb->query($wpdb->prepare(
-                "ALTER TABLE %i ADD COLUMN item_id VARCHAR(255) COMMENT 'Item ID' AFTER reference_info",
-                $table_name
-            ));
+            $wpdb->query($wpdb->prepare("ALTER TABLE %i ADD COLUMN item_id VARCHAR(255) COMMENT 'Item ID' AFTER reference_info", $table_name));
         }
 
         update_option(self::DB_VERSION_OPTION, self::DB_VERSION);
