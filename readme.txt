@@ -4,7 +4,7 @@ Tags: woocommerce, erp, quickbooks, inventory sync, order sync
 Requires at least: 6.2
 Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 1.2.6
+Stable tag: 1.2.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,7 +106,9 @@ Sync logs are stored in a dedicated table in your own WordPress database, not in
 
 = How does HexaSync authenticate to my site? =
 
-HexaSync writes logs through a REST endpoint that uses HTTP Basic Authentication for a WordPress user with administrator capability. We recommend creating a dedicated user for the integration and using a WordPress Application Password (Users → Profile → Application Passwords) instead of the account password, so access can be revoked at any time. Always use HTTPS.
+On a WooCommerce store, HexaSync writes logs with the WooCommerce REST API key (consumer key and secret) you already created for the WooCommerce connection: no WordPress password is needed. The key must have Read/Write permission and belong to an administrator or shop manager. WooCommerce checks the key as it does for its own API, and deleting the key under WooCommerce → Settings → Advanced → REST API stops HexaSync's access, including to the logs.
+
+On other sites, the log endpoint accepts HTTP Basic Authentication for a WordPress user with administrator capability. We recommend creating a dedicated user for the integration and using a WordPress Application Password (Users → Profile → Application Passwords) instead of the account password, so access can be revoked at any time. Always use HTTPS.
 
 = Where can I get help? =
 
@@ -120,6 +122,10 @@ Use the support forum for this plugin, or [contact Beehexa](https://www.beehexa.
 4. Connection guide: step-by-step setup to connect WooCommerce to HexaSync.
 
 == Changelog ==
+
+= 1.2.7 =
+* HexaSync can now write logs with the store's WooCommerce REST API key, the one it already uses to sync, so no WordPress password or Application Password is needed. WooCommerce checks the key and its Read/Write permission. Users who can manage WooCommerce (shop managers) can now use the log endpoint, since a key belongs to the user who created it.
+* A WooCommerce key sent with Basic Authentication is no longer also tried as a WordPress login, so it no longer shows up as a failed login attempt in security plugins.
 
 = 1.2.6 =
 * License files now match the plugin header: `LICENSE.txt` holds the GNU GPL v2 text, and the conflicting OSL 3.0 and MIT texts are removed. The plugin has always been declared GPLv2 or later. The Basic Auth handler now credits the WP REST API Basic Auth plugin it is based on. No functional changes.

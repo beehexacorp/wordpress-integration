@@ -5,7 +5,7 @@ Internal reference, not shipped to WordPress.org.
 HexaSync writes logs through the plugin's REST API. You can call it yourself to test the connection or to send logs from another system.
 
 * Base URL: `https://example.com/wp-json/beehexa/v1/hexasync` (replace `example.com` with your site).
-* Authentication: HTTP Basic Auth for a WordPress administrator. Use an Application Password (Users → Profile → Application Passwords) rather than the account password, so access can be revoked at any time. Always use HTTPS.
+* Authentication (1.2.7+): on a WooCommerce store, the store's WooCommerce REST API key with Read/Write permission, belonging to an administrator or shop manager: `curl -u "ck_…:cs_…"` over HTTPS, OAuth 1.0a over HTTP, as for `wc/v3`. WooCommerce checks the key. Otherwise, HTTP Basic Auth for a WordPress administrator with an Application Password (Users → Profile → Application Passwords) rather than the account password. Always use HTTPS.
 * Request bodies are JSON, with the log fields wrapped in a `log` object.
 
 In the examples, `APP_PASSWORD` is the Application Password, with or without its spaces.

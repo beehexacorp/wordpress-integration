@@ -34,6 +34,13 @@ class JsonBasicAuth
             return $user;
         }
 
+        // A WooCommerce consumer key is WooCommerce's to check (see allow_woocommerce_keys()).
+        // Trying it as a WordPress login would fail and count as a failed login attempt,
+        // which login-limiting plugins can answer by blocking HexaSync's IP address.
+        if (static::is_woocommerce_key(sanitize_text_field(wp_unslash($_SERVER['PHP_AUTH_USER'])))) {
+            return $user;
+        }
+
         $beehexa_json_basic_auth_error = null;
 
         $username = sanitize_user(wp_unslash($_SERVER['PHP_AUTH_USER']));
@@ -95,6 +102,43 @@ class JsonBasicAuth
             return true;
         }
 
+        return static::is_plugin_namespace();
+    }
+
+    /**
+     * Lets a WooCommerce REST API key (consumer key and secret) authenticate the
+     * plugin's beehexa/v1 routes, so HexaSync can write logs with the key the store
+     * already gave it for the WooCommerce connection, without a WordPress password.
+     *
+     * Hooked to woocommerce_rest_is_request_to_rest_api. WooCommerce then checks the
+     * key, its Read/Write permission against the request method, and records its last
+     * access, exactly as on its own routes. Only this plugin's namespace is added,
+     * whatever hexasync_basic_auth_all_routes says.
+     *
+     * @param bool $is_request_to_rest_api Whether WooCommerce already treats the request as its own.
+     * @return bool
+     */
+    static function allow_woocommerce_keys($is_request_to_rest_api)
+    {
+        return $is_request_to_rest_api || static::is_plugin_namespace();
+    }
+
+    /**
+     * Whether a Basic Auth user name is a WooCommerce consumer key.
+     *
+     * @param string $username User name from the Authorization header.
+     * @return bool
+     */
+    static function is_woocommerce_key($username)
+    {
+        return class_exists('WooCommerce', false) && strpos($username, 'ck_') === 0;
+    }
+
+    /**
+     * Whether the request URI names a beehexa/v1 route.
+     */
+    static function is_plugin_namespace()
+    {
         $namespace = '/beehexa/v1/';
 
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only routing check, no state change.

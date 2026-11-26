@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 Plugin Name: HexaSync – ERP, Accounting & POS Integration for WooCommerce
 Plugin URI: https://www.beehexa.com/
 Description: Through years of experience working with global retailers, manufacturers, and distributors, Beehexa has developed the HexaSync Automation Engine — a unified platform that connects and automates processes across eCommerce, Accounting, ERP, POS, CRM, GenAI, and other enterprise systems.
-Version: 1.2.6
+Version: 1.2.7
 Requires at least: 6.2
 Requires PHP: 7.4
 Author: Beehexa Team
@@ -31,7 +31,7 @@ General Public License for more details: https://www.gnu.org/licenses/gpl-2.0.ht
 is in LICENSE.txt).
 */
 
-define( 'BEEHEXA_VERSION', '1.2.6' );
+define( 'BEEHEXA_VERSION', '1.2.7' );
 define( 'BEEHEXA__MINIMUM_WP_VERSION', '6.2' );
 define( 'BEEHEXA__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 // Autoload classes
@@ -86,6 +86,11 @@ add_filter( 'determine_current_user', ['Beehexa\API\JsonBasicAuth','json_basic_a
  * Handle authentication errors for REST API
  */
 add_filter( 'rest_authentication_errors', ['Beehexa\API\JsonBasicAuth','json_basic_auth_error']);
+
+/**
+ * Accept WooCommerce REST API keys on the plugin's own REST routes
+ */
+add_filter( 'woocommerce_rest_is_request_to_rest_api', ['Beehexa\API\JsonBasicAuth','allow_woocommerce_keys']);
 
 
 /**

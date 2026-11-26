@@ -472,10 +472,13 @@ class HexaSyncLogAPI {
     /**
      * Check if user has permission to access API
      *
+     * Administrators, and users who can manage WooCommerce: a WooCommerce API key
+     * belongs to the user who created or approved it, often a shop manager.
+     *
      * @return bool
      */
     public function check_permission() {
-        return current_user_can( 'manage_options' );
+        return current_user_can( 'manage_options' ) || current_user_can( 'manage_woocommerce' );
     }
 }
 
